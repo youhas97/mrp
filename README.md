@@ -3,7 +3,7 @@
 Projekt-repo för grupp 11 i kandidatprojektskursen TDDD96.
 
 
-Vikten är ett värde mellan 0 och 100 där större tal innebär viktigare uppgift,
+Vikten är ett värde mellan 2 och 100 där större tal innebär viktigare uppgift,
 
 Tid är ett värde mellan 1 och 5, ju större värde, desto närmare deadline
 
