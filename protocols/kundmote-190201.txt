@@ -1,0 +1,39 @@
+- Ingripandet tar lång tid
+- Larmen sker via radioanrop
+- Behöver få hjälpmedel att förmedla position, lägesbild vid ingripandet, vem
+  man letar efter etc, skicka bild, text etc
+- Insatsledare behöver bättre överblick på hur ingripandet går
+
+
+Appen (krav)
+Prio 1
+- se egen position, kollegors position, lätt att använda
+- ledningscentral ska se alla poliser på karta
+- Dela position till andra/ledningscentralen
+- Ta emot larm med position från ledningscentral
+- Användas på tablet av insatsledare
+- Visualisera användarnas position på karta
+- Skicka ut larm med position till operativa polisen med app
+- Mätverktyg för responstid och dylikt
+
+Prio 2
+- Dela in användare i grupper, användas för att skicka riktar info
+- Ta emot o skicka filmsnutt elr video
+- Kunna ta emot o skicka korta meddelanden
+- Andra statusuppdateringar
+- Ta emot och skicka en rörelsebana (flera gpd-koordinator) hur en person har
+  rört sig och i vilken riktning personen försvann
+
+Quality
+- Frekvent uppdatering (varje 1 sek eller oftare)
+- Visa vem som är vem på kartan och visa vilken grupp de tillhör
+- Mobilappen ska kunna ta emot larm, position etc utan manuell hantering
+
+Mobilapp - Android/IOS
+Ledningscentral app Webbaserad i windowsmiljö
+
+Licens MIT
+
+Skalbar till tablet/mobil
+
+Identifiera sig vem man är i appen (grupp/patrull)
