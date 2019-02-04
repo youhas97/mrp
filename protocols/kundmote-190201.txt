@@ -17,7 +17,7 @@ Prio 1
 - Mätverktyg för responstid och dylikt
 
 Prio 2
-- Dela in användare i grupper, användas för att skicka riktar info
+- Dela in användare i grupper, användas för att skicka riktad info
 - Ta emot o skicka filmsnutt elr video
 - Kunna ta emot o skicka korta meddelanden
 - Andra statusuppdateringar
