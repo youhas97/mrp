@@ -1,0 +1,16 @@
+Gjordes denna veckan?
+    - Revidering av dokument
+    - Bestämt ramverk
+    - Haft kundmöte (informerade om status)
+    
+Ska göras nästa vecka?
+    - Skal för hemsida med inloggning
+    - Fortsätta revidera
+    - Påbörja kandidatrapport
+    - Läsa på automatiserad testning
+
+Potentiella problem
+    - Alla tider är uppskattade, milstolparna kanske inte nås
+    - Om vi inte trappar upp tiden varje vecka kommer vi behöva sitta runt 30h
+      varje vecka
+
