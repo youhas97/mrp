@@ -1,0 +1,4 @@
+> python manage.py runserver XXXX - startar server på http://localhost:XXXX/. Gå till  http://localhost:XXXX/admin för att logga in.
+
+username: admin
+password: kandidat11	
