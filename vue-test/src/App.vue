@@ -17,7 +17,8 @@ export default {
 
 <style>
 body {
-  background-repeat:no-repeat;
+  background-size: cover;
+  background-repeat: no-repeat;
   background-image: url("./assets/background.png");
 }
 #app {
