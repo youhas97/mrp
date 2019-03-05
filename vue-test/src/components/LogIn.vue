@@ -36,22 +36,27 @@ export default {
 </script>
 
 <style scoped>
-h2{
+h2 {
     color: #4a86e8;
     font-weight: bold;
-    font-size: 24px;
+    font-size: 150%;
 }
-section{
+section {
     padding: 10px;
 }
-label{
-    font-size: 18px;
+label {
+    font-size: 100%;
     color: #4a86e8;
-    padding: 7px;
+    padding: 0px;
 }
-button{
+button {
     margin: 12px;
+    font-size: 100%;
 }
+input {
+    font-size: 100%;
+}
+
 </style>
 
 
