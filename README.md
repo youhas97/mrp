@@ -15,10 +15,10 @@ Vikten räknas ut med T*(S+B), där T=tid, S=svårighet, B=betydelse
 
 Se till att ha pipenv installerad
 
-'pip install pipenv'
+`pip install pipenv`
 
-För att installera alla dependencies kör 'pipenv install'
+För att installera alla dependencies kör `pipenv install`
 
-För att använda pipenv kör 'pipenv shell'
+För att använda pipenv kör `pipenv shell`
 
 Done.
