@@ -47,14 +47,25 @@ section {
 label {
     font-size: 100%;
     color: #4a86e8;
-    padding: 0px;
 }
 button {
     margin: 12px;
     font-size: 100%;
+    border-radius: 30px 10px;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 2px solid #4a86e8;
 }
 input {
     font-size: 100%;
+    margin: 1px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 30px 10px;
+    border: 1px solid #4a86e8;
 }
 
 </style>

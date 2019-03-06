@@ -6,7 +6,6 @@
 </template>
 
 <script>
-
 import LogIn from './components/LogIn.vue'
     export default {
     name: 'app',
@@ -26,7 +25,7 @@ img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
+    width: 300px;
 }
 #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -36,5 +35,4 @@ img {
     color: #000000;
     margin-top: 5%;
 }
-
 </style>
