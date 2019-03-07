@@ -30,6 +30,23 @@ export default {
             console.log("email:", this.email);
             console.log("pw:", this.password);
             /* eslint-enable no-console */
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                /*if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("demo").innerHTML =
+                    this.responseText;
+                }*/
+                /* eslint-disable no-console */
+                console.log("received response");
+                console.log(xhttp.responseText);
+                /* eslint-enable no-console */
+            };
+            xhttp.open("GET", "http://127.0.0.1:8000/connect/login/", true);
+            xhttp.send();
+            /* eslint-disable no-console */
+            console.log("sending http request");
+            /* eslint-enable no-console */
         }
     }
 }
