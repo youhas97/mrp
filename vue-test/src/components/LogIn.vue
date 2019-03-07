@@ -31,6 +31,10 @@ export default {
             console.log("pw:", this.password);
             /* eslint-enable no-console */
 
+            var credentials = this.email + ":" + this.password;
+            var base64creds = btoa(credentials);
+            var authHeader = " Basic " + base64creds;
+
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 /*if (this.readyState == 4 && this.status == 200) {
@@ -43,6 +47,7 @@ export default {
                 /* eslint-enable no-console */
             };
             xhttp.open("GET", "http://127.0.0.1:8000/connect/login/", true);
+            xhttp.setRequestHeader("Authorization", authHeader);
             xhttp.send();
             /* eslint-disable no-console */
             console.log("sending http request");
