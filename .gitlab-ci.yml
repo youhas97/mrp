@@ -1,13 +1,12 @@
 stages:
   - build
-  
-before-script:
-  - cd vue-test/
 
 build site:
   stage: build
   only:
     - master
+  before-script:
+    - cd vue-test/
   script:
     - npm install --progress=false
     - npm run build
