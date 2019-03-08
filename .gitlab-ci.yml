@@ -5,7 +5,7 @@ build site:
   stage: build
   only:
     - master
-  before-script:
+  before_script:
     - cd vue-test/
   script:
     - npm install --progress=false
