@@ -61,21 +61,22 @@ export default {
             var base64creds = btoa(credentials); 
             var authHeader = " Basic " + base64creds;
 
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
+            var loginRequest = new XMLHttpRequest();
+            loginRequest.onreadystatechange = function() {
                 // TODO: Redirect to main page after success
                 /*if (this.readyState == 4 && this.status == 200) {
                     document.getElementById("demo").innerHTML =
                     this.responseText;
                 }*/
+
                 /* eslint-disable no-console */
-                console.log("status" + xhttp.statusText);
-                console.log(xhttp.responseText);
+                console.log("status" + loginRequest.statusText);
+                console.log(loginRequest.responseText);
                 /* eslint-enable no-console */
             };
-            xhttp.open("GET", "http://127.0.0.1:8000/connect/login/", true);
-            xhttp.setRequestHeader("Authorization", authHeader);
-            xhttp.send();
+            loginRequest.open("GET", "http://127.0.0.1:8000/connect/login/", true);
+            loginRequest.setRequestHeader("Authorization", authHeader);
+            loginRequest.send();
         }
     }
 }

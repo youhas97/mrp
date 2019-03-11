@@ -4,7 +4,9 @@ from base64 import b64decode
 from django.contrib.auth.models import User
 from django.db.models import When
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
+import json, re
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -27,13 +29,11 @@ def login(request):
             decoded_string = b64decode(request.META['HTTP_AUTHORIZATION'].split(' ')[1]).decode("UTF-8")
             uname, pword = decoded_string.split(':')
 
-            user = None
-            try:
-                user = User.objects.get(username__exact=uname)
-            except ObjectDoesNotExist:
+            if not User.objects.filter(username__exact=uname).exists():
                 print("No match found")
                 return unauth_access("Username does not exist.")
-
+                
+            user = User.objects.get(username__exact=uname)
             if not check_password(pword, user.password):
                 print("Password didn't match")
                 return unauth_access("Wrong password.")
@@ -45,3 +45,35 @@ def login(request):
             return response
         else:
             return unauth_access("Missing Authorization header.")
+
+
+"""
+Return a 400 Bad Request if request contains invalid username and/or password.
+"""
+def invalid_credentials(reason="Invalid username and/or password."):
+    response['Access-Control-Allow-Origin'] = '*'
+    response = HttpResponse(reason)
+    response.status = 400
+    return response
+
+@csrf_exempt
+def register(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        uname=data['username']
+        pword=data['password']
+        print("Username: " + uname + "\nPassword: " + pword)
+        # TODO: Check username and password for validity before creating a user.
+        """if not re.match("^[a-zA-Z]+[a-zA-Z0-9_+-.@]*$", uname) \
+            or len(uname) < 8 \
+            or len(uname) > 150 \
+            or len(pword) < 8 \
+            or 
+            return invalid_credentials()"""
+
+
+        User.objects.create(
+            username=data['username'], 
+            password=make_password(data['password'])
+            )
+        return HttpResponse()
