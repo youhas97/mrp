@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Return this response if login credentials do not match.
 def unauth_access(reason = "None"):
-    response = HttpResponse("Unauthorized access: " + reason)
+    response = HttpResponse("Unauthorized access: " + reason, status=401)
     response['Access-Control-Allow-Origin'] = '*'
     response['WWW-Authenticate'] =  'Basic realm="Access to Aina website", charset="UTF-8"'
     response.status = 401

@@ -1,6 +1,8 @@
 <template>
     <div class="login-wrapper border border-light">
-        <form class="form-signin" v-on:submit.prevent="login">
+        <img alt="MRP Logo" src="../assets/logo.png">
+        <form class="form-signin"
+        @submit.prevent="login">
             <h2 class="form-signin-heading">
             Please sign in
             </h2>
@@ -24,13 +26,15 @@
             <br/>
             </section> 
 
-            <button class="btn btn-lg btn-primary btn-block" type="submit" v-on:release="login">
+            <button class="btn btn-lg btn-primary btn-block" type="submit" @release="login">
             Sign in
             </button>
 
-            <button class="btn btn-lg btn-primary btn-block" type="button" v-on:click="create">
+            <!--
+            <button class="btn btn-lg btn-primary btn-block" type="button" @click="create">
             Create user
             </button>
+            -->
 
         </form>
 
@@ -44,7 +48,6 @@ export default {
         return {
             username: '',
             password:'',
-            creating: false,
         }
     },
     methods: {
@@ -61,20 +64,20 @@ export default {
             var base64creds = btoa(credentials); 
             var authHeader = " Basic " + base64creds;
 
+            let that = this;
             var loginRequest = new XMLHttpRequest();
             loginRequest.onreadystatechange = function() {
                 // TODO: Redirect to main page after success
-                /*if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("demo").innerHTML =
-                    this.responseText;
-                }*/
+                if (this.readyState == 4 && this.status == 200) {
+                    that.$router.replace('map')
+                }
 
                 /* eslint-disable no-console */
-                console.log("status" + loginRequest.statusText);
+                console.log("status" + loginRequest.status);
                 console.log(loginRequest.responseText);
                 /* eslint-enable no-console */
             };
-            loginRequest.open("GET", "http://127.0.0.1:8000/connect/login/", true);
+            loginRequest.open("GET", "http://127.0.0.1:9000/connect/login/", true);
             loginRequest.setRequestHeader("Authorization", authHeader);
             loginRequest.send();
         }
