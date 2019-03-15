@@ -71,9 +71,13 @@ export default {
                 if (this.readyState == 4 && this.status == 200) {
                     that.$router.replace('map')
                 }
+                else if (this.readyState == 4 && this.status != 200){
+                    alert('Incorrect username or password, please try again!')
+                }
 
                 /* eslint-disable no-console */
-                console.log("status" + loginRequest.status);
+                console.log("rdy-state: " + this.readyState)
+                console.log("status: " + loginRequest.status);
                 console.log(loginRequest.responseText);
                 /* eslint-enable no-console */
             };
