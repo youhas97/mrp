@@ -10,6 +10,8 @@ requests = "*"
 django = "*"
 mysqlclient = "*"
 djangorestframework = "*"
+channels = "*"
+twisted = {path = "C:/Users/Medo/Downloads/Twisted-18.9.0-cp37-cp37m-win_amd64.whl"}
 
 [requires]
 python_version = "3.7"
