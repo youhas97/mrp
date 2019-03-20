@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2e8a5c2b59cffad2aa9c9a1b60201737c20e2293f8f049f43fbc097f0c27259b"
+            "sha256": "fec199b21d51663bcac765d001003f5bb717699fa057cdb4ac6c05bde2a85d18"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -166,7 +166,6 @@
             "hashes": [
                 "sha256:294be2c6bf84ae776df2fc98e7af7d6537e1c5e60a46d33c3ce2a197677da395"
             ],
-            "path": "C:/Users/Medo/Downloads/Twisted-18.9.0-cp37-cp37m-win_amd64.whl",
             "version": "==18.9.0"
         },
         "txaio": {
