@@ -66,6 +66,11 @@ export default {
                 /* eslint-disable no-console */
                 console.log("server response: ", data);
                 /* eslint-enable no-console */
+                if(data['type'] == 'success'){
+                    that.$router.replace('map');
+                } else {
+                    alert('Incorrect username or password, please try again!');
+                }
             };
 
             socket.onclose = function(event) {
