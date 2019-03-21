@@ -57,11 +57,36 @@ export default {
             console.log("pw:", this.password);
             /* eslint-enable no-console */
 
-            var credentials = this.username + ":" + this.password;
+            let that = this;
+
+            var socket = new WebSocket('ws://127.0.0.1:9000/ws/connect/');
+
+            socket.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                /* eslint-disable no-console */
+                console.log("server response: ", data);
+                /* eslint-enable no-console */
+            };
+
+            socket.onclose = function(event) {
+                /* eslint-disable no-console */
+                console.error('Socket closed unexpectedly!', event.code);
+                /* eslint-enable no-console */
+            };
+
+            socket.onopen = function() {
+                socket.send(JSON.stringify({
+                    'type': 'authorization', 
+                    'username': that.username, 
+                    'password': that.password
+                }))
+            };
+
+            /*var credentials = this.username + ":" + this.password;
             /*
             Converts bytes from a string to a base64-encoded string. Every character in the string therefore needs to be exactly one byte to encode correctly. 
             */
-            var base64creds = btoa(credentials); 
+            /*var base64creds = btoa(credentials); 
             var authHeader = " Basic " + base64creds;
 
             let that = this;
@@ -76,14 +101,14 @@ export default {
                 }
 
                 /* eslint-disable no-console */
-                console.log("rdy-state: " + this.readyState)
-                console.log("status: " + loginRequest.status);
-                console.log(loginRequest.responseText);
+                //console.log("rdy-state: " + this.readyState)
+                //console.log("status: " + loginRequest.status);
+                //console.log(loginRequest.responseText);
                 /* eslint-enable no-console */
-            };
+            /*};
             loginRequest.open("GET", "http://127.0.0.1:9000/connect/login/", true);
             loginRequest.setRequestHeader("Authorization", authHeader);
-            loginRequest.send();
+            loginRequest.send();*/
         }
     }
 }
