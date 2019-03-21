@@ -66,6 +66,8 @@ export default {
                 /* eslint-disable no-console */
                 console.log("server response: ", data);
                 /* eslint-enable no-console */
+
+                // If successful login, redirect to map component
                 if(data['type'] == 'success'){
                     that.$router.replace('map');
                 } else {
@@ -80,12 +82,16 @@ export default {
             };
 
             socket.onopen = function() {
+                /* After connection has opened we send authentication credentials. The type key helps back-end identify what the client wants to do, similar to HTTP requests GET,POST etc. */
                 socket.send(JSON.stringify({
-                    'type': 'authorization', 
+                    'type': 'authorization',
                     'username': that.username, 
                     'password': that.password
                 }))
             };
+
+            // AUTHENTICATION WITH HTTP REQUEST ---------------------------------------------
+
 
             /*var credentials = this.username + ":" + this.password;
             /*
