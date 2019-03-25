@@ -2,6 +2,7 @@ stages:
   - build
 
 build site:
+  image: node:latest
   stage: build
   only:
     - master
