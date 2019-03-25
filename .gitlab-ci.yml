@@ -4,8 +4,8 @@ stages:
   - build
 
 cache:
-  - key: key
-  - paths:
+  key: key
+  paths:
     - node_modules/
 
 build site:
