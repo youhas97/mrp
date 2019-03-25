@@ -6,7 +6,7 @@ build site:
   only:
     - master
   before_script:
-    - cd vue-test/
+    - cd front-end/
   script:
     - npm install --progress=false
     - npm run build
