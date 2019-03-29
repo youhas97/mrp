@@ -2,6 +2,7 @@
     <div class="Map"/>
 </template>
 
+
 <script>
 import gmapsInit from '../utils/gmaps.js'
 
@@ -34,6 +35,7 @@ export default {
                 infoWindow.open(map);
                 map.setCenter(pos);
             }, function() {
+                // Geolocation ej tillåtet
                 handleLocationError(true, infoWindow, map.getCenter());
             });
         } else {

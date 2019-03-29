@@ -59,7 +59,7 @@ export default {
 
             let that = this;
 
-            var socket = new WebSocket('ws://127.0.0.1:9000/ws/connect/');
+            var socket = new WebSocket('ws://127.0.0.1:8080/ws/connect/');
 
             socket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
