@@ -25,6 +25,5 @@ img {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #000000;
-    margin-top: 5%;
 }
 </style>
