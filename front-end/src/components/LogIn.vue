@@ -57,11 +57,11 @@ export default {
             console.log("pw:", this.password);
             /* eslint-enable no-console */
 
-            let that = this;
+            let app = this;
 
-            var socket = new WebSocket('ws://127.0.0.1:9000/ws/connect/');
+            app.$store.state.websocket = new WebSocket('ws://127.0.0.1:9000/ws/connect/');
 
-            socket.onmessage = function(event) {
+            app.$store.state.websocket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
                 /* eslint-disable no-console */
                 console.log("server response: ", data);
@@ -69,24 +69,24 @@ export default {
 
                 // If successful login, redirect to map component
                 if(data['type'] == 'success'){
-                    that.$router.replace('map');
+                    app.$router.replace('map');
                 } else {
                     alert('Incorrect username or password, please try again!');
                 }
             };
 
-            socket.onclose = function(event) {
+            app.$store.state.websocket.onclose = function(event) {
                 /* eslint-disable no-console */
-                console.error('Socket closed unexpectedly!', event.code);
+                console.error('socket closed unexpectedly!', event.code);
                 /* eslint-enable no-console */
             };
 
-            socket.onopen = function() {
+            app.$store.state.websocket.onopen = function() {
                 /* After connection has opened we send authentication credentials. The type key helps back-end identify what the client wants to do, similar to HTTP requests GET,POST etc. */
-                socket.send(JSON.stringify({
+                app.$store.state.websocket.send(JSON.stringify({
                     'type': 'authorization',
-                    'username': that.username, 
-                    'password': that.password
+                    'username': app.username, 
+                    'password': app.password
                 }))
             };
 
