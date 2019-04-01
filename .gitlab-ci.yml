@@ -1,21 +1,15 @@
-image: node:latest
-
-stages:
-  - build
-
 cache:
   key: key
   paths:
     - node_modules/
 
 build site:
+  image: node:latest
   stage: build
-  only:
-    - master
   before_script:
     - cd front-end/
   script:
-    - npm install --progress=false
+    - npm install --progress=false --save-dev @babel/plugin-syntax-object-rest-spread
     - npm run build
   artifacts:
     expire_in: 1 week
