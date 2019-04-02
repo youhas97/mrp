@@ -1,1 +1,1 @@
-web: cd front-end && npm install && node server.js
+web: node front-end/server.js
