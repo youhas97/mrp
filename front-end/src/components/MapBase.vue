@@ -32,14 +32,11 @@ function geoLocate(map, infoWindow){
 }
 
 function geoGoal(map, goalWindow, results){
-        let pos = results[0].geometry.location;
-        
-        goalWindow.setPosition(pos);
-        goalWindow.setContent('Här ska du.');
-        goalWindow.open(map);
-        map.setCenter(pos);
-        
-    }
+    let pos = results;
+    goalWindow.setPosition(pos);
+    goalWindow.setContent('Här ska du.');
+    goalWindow.open(map);
+}
 
 
 function sendPostition(pos){
@@ -49,8 +46,8 @@ function sendPostition(pos){
 
 function recievePosition(listfrombackend){
     // tar emot new_list
-    listfrombackend = [];
-    curpos = listfrombackend;
+    //listfrombackend = [];
+    //curpos = listfrombackend;
 }
 
 /*
@@ -118,8 +115,6 @@ function watchCurrentPosition(infoWindow){
 }
 
 export default {
-    
-
     name: 'Map',
     async mounted() {
         const google = await gmapsInit();
@@ -131,26 +126,24 @@ export default {
                 throw new Error(status);
             }
             
-        let goal_loc;
+        let goal_loc = {lat: 58.399222, lng: 15.575886};
 
-         geocoder.geocode({address: 'Linköpings Universitet'}, (results_goal, status_goal) =>{
+        geocoder.geocode({address: 'Motala'}, (results_goal, status_goal) =>{
             if (status_goal !== 'OK' || !results_goal[0]){
                 throw new Error(status_goal);
             }
-            goal_loc = results_goal            
-         });
+            goal_loc = results_goal;            
+        });
 
-        
-        
         map.setCenter(results[0].geometry.location);
         map.fitBounds(results[0].geometry.viewport);
 
         let infoWindow = new google.maps.InfoWindow;
-        let goalWindow = new google.maps.infoWindow;
+        let goalWindow = new google.maps.InfoWindow;
 
         if(navigator.geolocation){
             let position = geoLocate(map, infoWindow);
-            geoGoal(map,goalWindow,goal_loc);
+            geoGoal(map, goalWindow, goal_loc);
             watchCurrentPosition(infoWindow, position);
             //update watchOtherPosition
             
