@@ -1,2 +1,2 @@
 backend: cd back-end && python manage.py migrate && daphne -b 0.0.0.0 -p $PORT mysite.asgi:application
-frontend: cd front-end && node server.js
+frontend: cd front-end && npm install && node server.js
