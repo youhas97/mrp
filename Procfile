@@ -1,1 +1,1 @@
-web: honcho -f ProcfileHoncho start
+web: cd front-end && npm install && node server.js
