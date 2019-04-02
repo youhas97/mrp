@@ -1,7 +1,7 @@
 {
   "name": "ingripandeapp",
   "version": "1.0.0",
-  "description": "heroku nodejs buildpack",
+  "description": "Used for heroku nodejs buildpack, needs a root package.json",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
