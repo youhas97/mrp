@@ -6,48 +6,60 @@
 <script>
 import gmapsInit from '../utils/gmaps.js'
 
+let google;
 let positionTimer;
+let markerList = [];
+let meObj = ["1234", {lat: 58, lng: 15}, "Joakim", "11", false];
+let JLObj = ["6363", {lat: 58.3970254, lng: 15.57499}, "Jacob", "11", false];
+let YHObj = ["1241234", {lat: 58.4128164, lng: 15.5586258}, "Yousef", "12", false];
+let VBObj = ["98484", {lat: 58.3700253, lng: 15.59499}, "Viktor", "12", false];
+let testlist = [JLObj,YHObj,VBObj];
 
-function handleLocationError(browserHasGeolocation, infoWindow, pos, map) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(browserHasGeolocation ? 'Error: Geolocation misslyckades!' : 'Error: Din webbläsare stödjer inte geolocation');
-    infoWindow.open(map);
+function handleLocationError(browserHasGeolocation, marker, pos, map) {
+    marker.setPosition(pos);
+    marker.setContent(browserHasGeolocation ? 'Error: Geolocation misslyckades!' : 'Error: Din webbläsare stödjer inte geolocation');
+    marker.open(map);
 }
 
-function geoLocate(map, infoWindow){
+function geoLocate(map, marker){
     navigator.geolocation.getCurrentPosition(function(position) {
          let pos = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-        infoWindow.setPosition(pos);
-        infoWindow.setContent('Här är du.');
-        infoWindow.open(map);
+        marker.setPosition(pos);
+        marker.setMap(map);
+        marker.setLabel(meObj[2]);
+        //marker.setContent('Här är du.');
+        //marker.open(map);
         map.setCenter(pos);
         return position;
     }, function() {
         // Geolocation ej tillåtet
-        handleLocationError(true, infoWindow, map.getCenter(), map);
+        handleLocationError(true, marker, map.getCenter(), map);
     });
 }
 
 function geoGoal(map, goalWindow, results){
-    let pos = results;
-    goalWindow.setPosition(pos);
-    goalWindow.setContent('Här ska du.');
-    goalWindow.open(map);
-}
+        let pos = results[0].geometry.location;
+        
+        goalWindow.setPosition(pos);
+        goalWindow.setContent('Här ska du.');
+        goalWindow.open(map);
+        map.setCenter(pos);
+        
+        
+    }
 
 
 function sendPostition(pos){
     // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.
 }
 
-
 function recievePosition(listfrombackend){
     // tar emot new_list
-    //listfrombackend = [];
-    //curpos = listfrombackend;
+    listfrombackend = [];
+    curpos = listfrombackend;
 }
 
 /*
@@ -67,7 +79,7 @@ Repeat
 [[person1],[person2],[person3],[person4]]
 
 
-[person1] = ["id", "(lat, long)", "namn", "grupp#"]
+[person1] = ["id", "(lat, long)", "namn", "grupp#", "callingHelp"]
 
 
 */
@@ -96,14 +108,14 @@ function watchOtherPosition(oldpos){
 */
 
 
-function watchCurrentPosition(infoWindow){
+function watchCurrentPosition(marker){
     positionTimer = navigator.geolocation.watchPosition(
         function(position){
             let pos = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             };
-            infoWindow.setPosition(pos);
+            marker.setPosition(pos);
             sendPostition(pos);
         }
     ,null,
@@ -114,56 +126,87 @@ function watchCurrentPosition(infoWindow){
     });
 }
 
+function socketSetup(map){
+    var socket = new WebSocket('ws://127.0.0.1:8080/ws/connect/');
+
+        socket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            // If message is of 'gps' type then parse the data and distribute the new markers
+            if(data['type'] == 'gps'){
+                markerList = [];
+                for(let i = 0; i < data['gpslist'].length(); i++){
+                    let personObj = data['gpslist'][i];
+                    let marker = new google.maps.Marker({
+                        position: personObj.pos,
+                        map: map,
+                        title: personObj.name
+                    });
+                    markerList.push(marker);
+                }
+            } else {
+                alert('GPS data is unavailable');
+            }
+        };
+
+        }
+
 export default {
+    
+
+    
+
     name: 'Map',
     async mounted() {
-        const google = await gmapsInit();
+        google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
         const map = new google.maps.Map(this.$el);
-
+        socketSetup(map);
         geocoder.geocode({address: 'Arboga'}, (results, status) =>{
             if (status !== 'OK' || !results[0]){
                 throw new Error(status);
             }
             
-        let goal_loc = {lat: 58.399222, lng: 15.575886};
+        let goal_loc;
 
-        geocoder.geocode({address: 'Motala'}, (results_goal, status_goal) =>{
+         geocoder.geocode({address: 'Linköpings Universitet'}, (results_goal, status_goal) =>{
             if (status_goal !== 'OK' || !results_goal[0]){
                 throw new Error(status_goal);
             }
-            goal_loc = results_goal;            
-        });
+            goal_loc = results_goal            
+         });
 
+        
+        
         map.setCenter(results[0].geometry.location);
         map.fitBounds(results[0].geometry.viewport);
 
-        let infoWindow = new google.maps.InfoWindow;
+        let marker = new google.maps.Marker;
         let goalWindow = new google.maps.InfoWindow;
 
         if(navigator.geolocation){
-            let position = geoLocate(map, infoWindow);
-            geoGoal(map, goalWindow, goal_loc);
-            watchCurrentPosition(infoWindow, position);
-            //update watchOtherPosition
-            
-            /*navigator.geolocation.getCurrentPosition(function(position) {
-                let pos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-
-                infoWindow.setPosition(pos);
-                infoWindow.setContent('Här är du.');
-                infoWindow.open(map);
-                map.setCenter(pos);
-            }, function() {
-                // Geolocation ej tillåtet
-                handleLocationError(true, infoWindow, map.getCenter(), map);
-            });*/
+            let position = geoLocate(map, marker);
+            //geoGoal(map,goalWindow,goal_loc);
+            watchCurrentPosition(marker, position);
+            let i=0;
+            testlist.forEach(function(){
+                 /* eslint-disable no-console */
+                console.log("username:");
+                console.log("pw:", markerList);
+                /* eslint-enable no-console */
+                let marker3 = new google.maps.Marker;
+                marker3.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
+                if(testlist[i][3] != meObj[3]){
+                    marker3.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
+                }
+                marker3.setPosition(testlist[i][1]);
+                marker3.setMap(map);
+                marker3.setLabel([i][2]);
+                markerList.push(marker3);
+                i++;
+            });
         } else {
             // Geolocation ej activerat
-            handleLocationError(false, infoWindow, map.getCenter(), map);
+            handleLocationError(false, marker, map.getCenter(), map);
         }
         });
     },
