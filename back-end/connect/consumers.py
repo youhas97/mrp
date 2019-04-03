@@ -17,6 +17,9 @@ Types:
 'error'
 'gps'
 """
+GPS_VALUES = {}
+
+
 class SyncAinaConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
@@ -62,6 +65,12 @@ class SyncAinaConsumer(WebsocketConsumer):
                     'message':'Wrong credentials supplied, closing connection...'
                 }))
                 self.close()
+        elif text_data_json['type'] == 'gps':
+            username = text_data_json['username']
+            data = text_data_json['gps_data']
+            GPS_VALUES[username] = data
+            self.send(text_data=json.dumps(GPS_VALUES))
+
         
         else:
             self.send(text_data=json.dumps({
