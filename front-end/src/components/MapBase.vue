@@ -98,8 +98,9 @@ function recieveMessage(map){
         if(data['type'] == 'gps_values'){
             markerList = [];
             personList = [];
-            for(let i = 0; i < data['gps_list'].length; i++){
-                let personObj = data['gps_list'][i];
+            objList = Object.values(data['gps_list']);
+            for(let i = 0; i < objList.length; i++){
+                let personObj = objList[i];
                 let marker = new google.maps.Marker({
                     position: personObj.pos,
                     map: map,
