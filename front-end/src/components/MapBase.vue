@@ -10,9 +10,10 @@ let google;
 let positionTimer;
 let markerList = [];
 let meObj = ["1234", {lat: 58, lng: 15}, "Joakim", "11", false];
-let JLObj = ["6363", {lat: 58.3970254, lng: 15.57499}, "Jacob", "11", false];
+let JLObj = ["6363", {lat: 58.3960254, lng: 15.58599}, "Jacob", "11", false];
 let YHObj = ["1241234", {lat: 58.4128164, lng: 15.5586258}, "Yousef", "12", false];
-let VBObj = ["98484", {lat: 58.3700253, lng: 15.59499}, "Viktor", "12", false];
+let VBObj = ["98484", {lat: 58.4090253, lng: 15.59499}, "Viktor", "12", false];
+
 let testlist = [JLObj,YHObj,VBObj];
 
 function handleLocationError(browserHasGeolocation, marker, pos, map) {
@@ -29,7 +30,8 @@ function geoLocate(map, marker){
         };
         marker.setPosition(pos);
         marker.setMap(map);
-        marker.setLabel(meObj[2]);
+        marker.setLabel("Jag");
+        marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
         //marker.setContent('Här är du.');
         //marker.open(map);
         map.setCenter(pos);
@@ -139,7 +141,7 @@ function socketSetup(map){
                     let marker = new google.maps.Marker({
                         position: personObj.pos,
                         map: map,
-                        title: personObj.name
+                        label: personObj.name
                     });
                     markerList.push(marker);
                 }
@@ -200,7 +202,7 @@ export default {
                 }
                 marker3.setPosition(testlist[i][1]);
                 marker3.setMap(map);
-                marker3.setLabel([i][2]);
+                marker3.setLabel(testlist[i][2]);
                 markerList.push(marker3);
                 i++;
             });
