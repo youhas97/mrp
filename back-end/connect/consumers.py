@@ -62,6 +62,8 @@ class SyncAinaConsumer(WebsocketConsumer):
                     'message':'Wrong credentials supplied, closing connection...'
                 }))
                 self.close()
+        elif text_data_json['type'] == 'message':
+            print(text_data_json['message'])
         
         else:
             self.send(text_data=json.dumps({

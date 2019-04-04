@@ -8,6 +8,7 @@ import gmapsInit from '../utils/gmaps.js'
 
 export default {
     name: 'Map',
+
     async mounted() {
         const google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
@@ -34,6 +35,7 @@ export default {
                 infoWindow.setContent('Här är du.');
                 infoWindow.open(map);
                 map.setCenter(pos);
+                
             }, function() {
                 // Geolocation ej tillåtet
                 handleLocationError(true, infoWindow, map.getCenter());
@@ -48,6 +50,14 @@ export default {
             infoWindow.open(map);
         }
         });
+
+        
+        let app = this;
+        
+        app.$store.state.websocket.send(JSON.stringify({
+            'type':'message',
+            'message':'same socket in MapBase'
+        }))
     },
 };
 </script>
