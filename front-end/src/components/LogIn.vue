@@ -59,7 +59,7 @@ export default {
 
             let app = this;
 
-            app.$store.state.websocket = new WebSocket('ws://192.168.43.128:9000/ws/connect/');
+            app.$store.state.websocket = new WebSocket('ws://heroku-mrp-backend.herokuapp.com/ws/connect/');
 
             app.$store.state.websocket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
