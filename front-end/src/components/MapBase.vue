@@ -10,6 +10,7 @@ let google;
 let positionTimer;
 let markerList = [];
 let personList = [];
+let app;
 let meObj = {
     "id": null,
     "pos": null,
@@ -24,9 +25,9 @@ let YHObj = ["1241234", {lat: 58.4128164, lng: 15.5586258}, "Yousef", "12", true
 let VBObj = ["98484", {lat: 58.4090253, lng: 15.59499}, "Viktor", "12", true];
 
 function handleLocationError(browserHasGeolocation, marker, pos, map) {
-    marker.setPosition(pos);
-    marker.setContent(browserHasGeolocation ? 'Error: Geolocation misslyckades!' : 'Error: Din webbläsare stödjer inte geolocation');
-    marker.open(map);
+    //marker.setPosition(pos);
+    //marker.setContent(browserHasGeolocation ? 'Error: Geolocation misslyckades!' : 'Error: Din webbläsare stödjer inte geolocation');
+    //marker.open(map);
 }
 
 function geoLocate(map, marker){
@@ -35,7 +36,6 @@ function geoLocate(map, marker){
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
-        meObj.name = pos;
         marker.setPosition(pos);
         marker.setMap(map);
         marker.setLabel("Jag");
@@ -55,82 +55,15 @@ function geoGoal(map, goalWindow, results){
     goalWindow.open(map);
 }
 
-
-function sendPerson(){
-    // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.
-    this.$store.state.websocket.send(JSON.stringify({
-        'type': 'gps',
-        "id": meObj.id,
-        "pos": meObj.pos,
-        "name": meObj.name,
-        "group": meObj.group,
-        "needHelp": meObj.needHelp
-    }))
-       
-}
-
-function watchCurrentPosition(marker){
-    positionTimer = navigator.geolocation.watchPosition(
-        function(position){
-            let pos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-            marker.setPosition(pos);
-            meObj.pos = pos;
-            sendPerson();
-        }
-    ,null,
-    {
-        enableHighAccuracy: false,
-        timeout: 5000,
-        maximumAge: Infinity
-    });
-}
-
-function recieveMessage(map){
-    this.$store.state.websocket.onmessage = function(event) {
-        var data = JSON.parse(event.data);
-        /* eslint-disable no-console */
-        console.log("onmessage data:", data);
-        /* eslint-enable no-console */
-        // If message is of 'gps' type then parse the data and distribute the new markers
-        if(data['type'] == 'gps_values'){
-            markerList = [];
-            personList = [];
-            objList = Object.values(data['gps_list']);
-            for(let i = 0; i < objList.length; i++){
-                let personObj = objList[i];
-                let marker = new google.maps.Marker({
-                    position: personObj.pos,
-                    map: map,
-                    label: personObj.name                    
-                });                
-                marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
-                if(personObj.needHelp){
-                    marker.setIcon({ url:"https://img.icons8.com/flat_round/64/000000/error.png",
-                                      scaledSize: new google.maps.Size(30,30)});
-                    marker.setAnimation(google.maps.Animation.BOUNCE)
-
-                } else if(personObj.group != meObj.group){                    
-                    marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
-                }
-                markerList.push(marker);
-                personList.push(personObj);
-            }
-        } else {
-            alert('GPS data is unavailable');
-        }
-    };
-}
-
 export default {
     name: 'Map',
     async mounted() {
         google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
         const map = new google.maps.Map(this.$el);
-        recieveMessage(map);
+        meObj = this.$store.state.meObj;
+        app = this;
+        //this.recieveMessage(map);
         geocoder.geocode({address: 'Arboga'}, (results, status) =>{
             if (status !== 'OK' || !results[0]){
                 throw new Error(status);
@@ -152,7 +85,7 @@ export default {
         if(navigator.geolocation){
             let position = geoLocate(map, marker);
             //geoGoal(map,goalWindow,goal_loc);
-            watchCurrentPosition(marker, position);
+            this.watchCurrentPosition(marker);
             let i=0;
             testlist.forEach(function(){
                 let marker3 = new google.maps.Marker;
@@ -178,6 +111,71 @@ export default {
         }
         });
     },
+    methods:{
+    recieveMessage: function(map){
+        app.$store.state.websocket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            /* eslint-disable no-console */
+            console.log("onmessage data:", data);
+            /* eslint-enable no-console */
+            // If message is of 'gps' type then parse the data and distribute the new markers
+            if(data['type'] == 'gps_values'){
+                markerList = [];
+                personList = [];
+                let objList = Object.values(data['gps_list']);
+                for(let i = 0; i < objList.length; i++){
+                    let personObj = objList[i];
+                    let marker = new google.maps.Marker({
+                        position: personObj.pos,
+                        map: map,
+                        label: personObj.name                    
+                    });                
+                    marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
+                    if(personObj.needHelp){
+                        marker.setIcon({ url:"https://img.icons8.com/flat_round/64/000000/error.png",
+                                        scaledSize: new google.maps.Size(30,30)});
+                        marker.setAnimation(google.maps.Animation.BOUNCE)
+
+                    } else if(personObj.group != meObj.group){                    
+                        marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
+                    }
+                    markerList.push(marker);
+                    personList.push(personObj);
+                }
+            } else {
+                alert('GPS data is unavailable');
+            }
+        };
+    },
+    sendPerson: function(){
+    // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.
+    app.$store.state.websocket.send(JSON.stringify({
+        'type': 'gps',
+        'id': meObj.id,
+        'pos': meObj.pos,
+        'name': meObj.name,
+        'group': meObj.group,
+        'needHelp': meObj.needHelp
+    }))
+    },
+    watchCurrentPosition: function(marker){
+        positionTimer = navigator.geolocation.watchPosition(
+        function(position){
+            let pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            marker.setPosition(pos);
+            meObj.pos = pos;
+            app.sendPerson();
+        }
+        ,null,
+        {
+            enableHighAccuracy: false,
+            timeout: 5000,
+            maximumAge: Infinity
+        });
+    }}
 };
 </script>
 

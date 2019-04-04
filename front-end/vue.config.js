@@ -1,4 +1,4 @@
-var fs = require('fs');
+/*var fs = require('fs');
 var https = require('https');
 
 module.exports = {
@@ -9,4 +9,4 @@ module.exports = {
             ca: fs.readFileSync('SSLcerts/rootCA.pem'),
         }
     }
-};
+};*/
