@@ -8,10 +8,14 @@ verify_ssl = true
 [packages]
 requests = "*"
 django = "*"
-mysqlclient = "*"
 djangorestframework = "*"
 channels = "*"
 honcho = "*"
+channels-redis = "*"
+pyopenssl = "*"
+service-identity = "*"
+twisted = {extras = ["http2", "tls"],version = "*"}
+http2 = "*"
 
 [requires]
 python_version = "3.7"
