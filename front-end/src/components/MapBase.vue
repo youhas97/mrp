@@ -158,6 +158,7 @@ export default {
     
 
     name: 'Map',
+
     async mounted() {
         google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
@@ -211,6 +212,14 @@ export default {
             handleLocationError(false, marker, map.getCenter(), map);
         }
         });
+
+        
+        let app = this;
+        
+        app.$store.state.websocket.send(JSON.stringify({
+            'type':'message',
+            'message':'same socket in MapBase'
+        }))
     },
 };
 </script>
