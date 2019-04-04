@@ -69,7 +69,10 @@ class SyncAinaConsumer(WebsocketConsumer):
             username = text_data_json['username']
             data = text_data_json['gps_data']
             GPS_VALUES[username] = data
-            self.send(text_data=json.dumps(GPS_VALUES))
+            self.send(text_data=json.dumps({
+                'type': 'gps_values',
+                'gps_list': GPS_VALUES
+                }))
 
         elif text_data_json['type'] == 'message':
             print(text_data_json['message'])
