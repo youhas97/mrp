@@ -59,7 +59,13 @@ export default {
 
             let app = this;
 
-            app.$store.state.websocket = new WebSocket('ws://heroku-mrp-backend.herokuapp.com/ws/connect/');
+            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var heroku_uri = 
+                ws_scheme + "://heroku-mrp-backend.herokuapp.com/ws/connect/";
+            var heroku_uri_ws = "ws://localhost:8002/ws/connect/"
+            var local_uri = 
+                ws_scheme + "://" + window.location.hostname + ":8002/ws/connect/";
+            app.$store.state.websocket = new WebSocket(heroku_uri);
 
             app.$store.state.websocket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
@@ -79,6 +85,7 @@ export default {
                 /* eslint-disable no-console */
                 console.error('socket closed unexpectedly!', event.code);
                 /* eslint-enable no-console */
+                alert(event.reason)
             };
 
             app.$store.state.websocket.onopen = function() {
@@ -89,6 +96,10 @@ export default {
                     'password': app.password
                 }))
             };
+
+            /*app.$store.state.websocket.onerror = function(event) {
+                alert(event.)
+            }*/
 
             // AUTHENTICATION WITH HTTP REQUEST ---------------------------------------------
 
