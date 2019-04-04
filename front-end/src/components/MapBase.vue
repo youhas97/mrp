@@ -9,12 +9,19 @@ import gmapsInit from '../utils/gmaps.js'
 let google;
 let positionTimer;
 let markerList = [];
-let meObj = ["1234", {lat: 58, lng: 15}, "Joakim", "11", false];
+let personList = [];
+let meObj = {
+    "id": null,
+    "pos": null,
+    "name": null,
+    "group": null,
+    "needHelp": null
+}
+let meObjtest = ["1234", {lat: 58, lng: 15}, "Joakim", "11", false];
+let testlist = [];
 let JLObj = ["6363", {lat: 58.3960254, lng: 15.58599}, "Jacob", "11", false];
-let YHObj = ["1241234", {lat: 58.4128164, lng: 15.5586258}, "Yousef", "12", false];
-let VBObj = ["98484", {lat: 58.4090253, lng: 15.59499}, "Viktor", "12", false];
-
-let testlist = [JLObj,YHObj,VBObj];
+let YHObj = ["1241234", {lat: 58.4128164, lng: 15.5586258}, "Yousef", "12", true];
+let VBObj = ["98484", {lat: 58.4090253, lng: 15.59499}, "Viktor", "12", true];
 
 function handleLocationError(browserHasGeolocation, marker, pos, map) {
     marker.setPosition(pos);
@@ -28,12 +35,11 @@ function geoLocate(map, marker){
             lat: position.coords.latitude,
             lng: position.coords.longitude
         };
+        meObj.name = pos;
         marker.setPosition(pos);
         marker.setMap(map);
         marker.setLabel("Jag");
         marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
-        //marker.setContent('Här är du.');
-        //marker.open(map);
         map.setCenter(pos);
         return position;
     }, function() {
@@ -43,72 +49,25 @@ function geoLocate(map, marker){
 }
 
 function geoGoal(map, goalWindow, results){
-        let pos = results[0].geometry.location;
-        
-        goalWindow.setPosition(pos);
-        goalWindow.setContent('Här ska du.');
-        goalWindow.open(map);
-        map.setCenter(pos);
-        
-        
-    }
+    let pos = results[0].geometry.location;
+    goalWindow.setPosition(pos);
+    goalWindow.setContent('Här ska du.');
+    goalWindow.open(map);
+}
 
 
-function sendPostition(pos){
+function sendPerson(){
     // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.
+    this.$store.state.websocket.send(JSON.stringify({
+        'type': 'gps',
+        "id": meObj.id,
+        "pos": meObj.pos,
+        "name": meObj.name,
+        "group": meObj.group,
+        "needHelp": meObj.needHelp
+    }))
+       
 }
-
-function recievePosition(listfrombackend){
-    // tar emot new_list
-    listfrombackend = [];
-    curpos = listfrombackend;
-}
-
-/*
-Får lista med nya positioner från backend.
-Om första loop sätt new_list till old_list
-
-Får lista med nya positioner från backend,
-jämnför alla person-objekt om de har nya pos.
-Updatera alla person-objekts positioner, genom
-att sätta old_pos till new_pos om det skiljer sig,
-annars do nothing.
-
-Sedan sätt new_list till old_list.
-
-Repeat
-
-[[person1],[person2],[person3],[person4]]
-
-
-[person1] = ["id", "(lat, long)", "namn", "grupp#", "callingHelp"]
-
-
-*/
-
-/*
-function watchOtherPosition(oldpos){   
-
-    if(!oldpos){
-        
-    } else{
-        //nån typ av loop
-        person_1_old_pos = oldpos[0].getpos;
-        person_1_cur_pos = curpos[0].getpos;
-
-
-        if(person_1_old_pos == person_1_cur_pos){
-            return 0;
-        } else {
-            person_1.setPos(person_1_cur_pos);
-            
-        }
-
-    } 
-    
-}
-*/
-
 
 function watchCurrentPosition(marker){
     positionTimer = navigator.geolocation.watchPosition(
@@ -118,7 +77,8 @@ function watchCurrentPosition(marker){
                 lng: position.coords.longitude
             };
             marker.setPosition(pos);
-            sendPostition(pos);
+            meObj.pos = pos;
+            sendPerson();
         }
     ,null,
     {
@@ -128,58 +88,51 @@ function watchCurrentPosition(marker){
     });
 }
 
-function socketSetup(map){
-    var socket = new WebSocket('ws://127.0.0.1:8080/ws/connect/');
-
-        socket.onmessage = function(event) {
-            var data = JSON.parse(event.data);
-            // If message is of 'gps' type then parse the data and distribute the new markers
-            if(data['type'] == 'gps'){
-                markerList = [];
-                for(let i = 0; i < data['gpslist'].length(); i++){
-                    let personObj = data['gpslist'][i];
-                    let marker = new google.maps.Marker({
-                        position: personObj.pos,
-                        map: map,
-                        label: personObj.name
-                    });
-                    markerList.push(marker);
-                }
-            } else {
-                alert('GPS data is unavailable');
+function recieveMessage(map){
+    this.$store.state.websocket.onmessage = function(event) {
+        var data = JSON.parse(event.data);
+        /* eslint-disable no-console */
+        console.log("onmessage data:", data);
+        /* eslint-enable no-console */
+        // If message is of 'gps' type then parse the data and distribute the new markers
+        if(data['type'] == 'gps_values'){
+            markerList = [];
+            personList = [];
+            for(let i = 0; i < data['gps_list'].length; i++){
+                let personObj = data['gps_list'][i];
+                let marker = new google.maps.Marker({
+                    position: personObj.pos,
+                    map: map,
+                    label: personObj.name
+                });
+                markerList.push(marker);
+                personList.push(personObj);
             }
-        };
-
+        } else {
+            alert('GPS data is unavailable');
         }
+    };
+}
 
 export default {
-    
-
-    
-
     name: 'Map',
-
     async mounted() {
         google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
         const map = new google.maps.Map(this.$el);
-        socketSetup(map);
+        recieveMessage(map);
         geocoder.geocode({address: 'Arboga'}, (results, status) =>{
             if (status !== 'OK' || !results[0]){
                 throw new Error(status);
             }
-            
-        let goal_loc;
+            let goal_loc;
 
-         geocoder.geocode({address: 'Linköpings Universitet'}, (results_goal, status_goal) =>{
+        geocoder.geocode({address: 'Linköpings Universitet'}, (results_goal, status_goal) =>{
             if (status_goal !== 'OK' || !results_goal[0]){
                 throw new Error(status_goal);
             }
             goal_loc = results_goal            
-         });
-
-        
-        
+        });
         map.setCenter(results[0].geometry.location);
         map.fitBounds(results[0].geometry.viewport);
 
@@ -192,14 +145,16 @@ export default {
             watchCurrentPosition(marker, position);
             let i=0;
             testlist.forEach(function(){
-                 /* eslint-disable no-console */
-                console.log("username:");
-                console.log("pw:", markerList);
-                /* eslint-enable no-console */
                 let marker3 = new google.maps.Marker;
                 marker3.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
-                if(testlist[i][3] != meObj[3]){
+                if(testlist[i] != meObj[3]){
                     marker3.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
+                }
+                if(testlist[i][4]){
+                    marker3.setIcon({ url:"https://img.icons8.com/flat_round/64/000000/error.png",
+                                      scaledSize: new google.maps.Size(30,30)});
+                    marker3.setAnimation(google.maps.Animation.BOUNCE)
+
                 }
                 marker3.setPosition(testlist[i][1]);
                 marker3.setMap(map);
@@ -212,14 +167,6 @@ export default {
             handleLocationError(false, marker, map.getCenter(), map);
         }
         });
-
-        
-        let app = this;
-        
-        app.$store.state.websocket.send(JSON.stringify({
-            'type':'message',
-            'message':'same socket in MapBase'
-        }))
     },
 };
 </script>
