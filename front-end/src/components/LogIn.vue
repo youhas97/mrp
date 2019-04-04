@@ -68,8 +68,15 @@ export default {
                 /* eslint-enable no-console */
 
                 // If successful login, redirect to map component
-                if(data['type'] == 'success'){
+                if(data['type'] == 'success'){                    
                     app.$router.replace('map');
+                    app.$store.state.meObj = {
+                        'id': data['id'],
+                        'pos' : data['pos'],
+                        'name' : data['name'],
+                        'group' : data['group'],
+                        'needHelp' : data['needHelp']
+                    }
                 } else {
                     alert('Incorrect username or password, please try again!');
                 }

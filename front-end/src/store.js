@@ -10,7 +10,8 @@ In this case, we can use the same websocket in all of our components.
 */
 export default new Vuex.Store({
   state: {
-    websocket: null
+    websocket: null,
+    meObj: null
   },
   mutations: {
 
