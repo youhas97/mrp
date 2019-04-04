@@ -1,8 +1,10 @@
 <template>
     <div>
         <button
-        @click="larm">
-            Press me
+            @mousedown="hold"
+            @mouseup="release"
+            @mouseout="release">
+            {{buttonText}}
         </button>
         <Map/>
     </div>
@@ -11,15 +13,66 @@
 <script>
 import Map from './MapBase';
 
+
 export default {
     name: 'Larm',
     components: {
         Map
     },
+    data: function () {
+            return {
+                buttonText: "Förstärkning",
+                timerStarted: false,
+                timeoutId: 0,
+                backUpCalled: false,
+                secs: 0,
+            }
+        },
+
     methods: {
-        larm: function() {
-            alert('det här funkar');
-        }
+        hold: function() {
+            this.buttonText="Håll i 3 sekunder";
+            this.timerStarted = true;
+            let that = this;
+            this.timeoutId = setTimeout(function () {
+                //Map.needBackUp=true;
+                that.timerStarted = false;
+                if(that.backUpCalled){
+                    //Send to backend that user need backup
+                    that.backUpCalled = false;
+                }
+                else{
+                    that.backUpCalled = true;
+                }
+                that.fetchButtonText();
+            }, 3000);
+
+
+        },
+        release: function(){
+            if(this.timerStarted){
+                //Backup regreted
+                clearTimeout(this.timeoutId);
+            }
+            this.timerStarted = false;
+            this.fetchButtonText();
+        },
+        fetchButtonText: function(){
+          if(this.backUpCalled){
+              this.buttonText = "Avbryt Larm";
+          }
+          else{
+              this.buttonText = "Förstärkning";
+          }
+        }/*
+        countSecs: function(){
+            for(var i; i < 3; i++){
+                let that = this;
+                setTimeout(function () {
+                    that.secs = i + 1;
+                }, 1000*i + 10);
+            }
+        }*/
     }
 }
 

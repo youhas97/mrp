@@ -5,11 +5,15 @@
 <script>
 import gmapsInit from '../utils/gmaps.js'
 
+
+
+
 export default {
     name: 'Map',
     data: function() {
         return {
             alert_on: false,
+            needBackUp: false
         }
     },
     async mounted() {
@@ -21,12 +25,13 @@ export default {
             if (status !== 'OK' || !results[0]){
                 throw new Error(status);
             }
-        
+
         map.setCenter(results[0].geometry.location);
         map.fitBounds(results[0].geometry.viewport);
 
         let infoWindow = new google.maps.InfoWindow;
-        
+
+
         if(navigator.geolocation){
             navigator.geolocation.getCurrentPosition(function(position) {
                 let pos = {
@@ -34,21 +39,37 @@ export default {
                     lng: position.coords.longitude
                 };
 
-                var image = "http://maps.google.com/mapfiles/ms/icons/police.png";
-                
+                var image = "https://img.icons8.com/color/48/000000/filled-circle.png";
+
                 var marker = new google.maps.Marker({
-                    position: pos,
                     title: "location",
-                    icon: image
-                })
-                marker.setMap(map);
-                /*
-                infoWindow.setPosition(pos);
-                infoWindow.setContent('Här är du.');
-                infoWindow.open(map);
-                */
+                    map:map,
+                    icon:image})
+                var needBackUp=true;
+                if(needBackUp){
+                    var alert = {
+                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                        scaledSize: new google.maps.Size(35,35)
+                    }
+                    marker.setIcon(alert);
+                    marker.setAnimation(google.maps.Animation.BOUNCE)
+                }
+                else{
+                    var blueDot = {
+                        url: "https://img.icons8.com/color/48/000000/filled-circle.png",
+                        scaledSize: new google.maps.Size(25,25)
+                    }
+                    marker.setIcon(blueDot);
+                }
+
+                marker.setPosition(pos);
+                marker.addListener()
 
                 map.setCenter(pos);
+                map.setZoom(15);
+
+                //google.maps.event.addDomListener(window, 'load', initialize);
+
             }, function() {
                 handleLocationError(true, infoWindow, map.getCenter());
             });
@@ -61,6 +82,8 @@ export default {
             infoWindow.setContent(browserHasGeolocation ? 'Error: Geolocation misslyckades!' : 'Error: Din webbläsare stödjer inte geolocation');
             infoWindow.open(map);
         }
+      //google.maps.event.addDomListener(window, 'load', tempFunc);
+
         });
     },
 };
@@ -71,9 +94,10 @@ export default {
     body{
         margin: 0;
         padding: 0;
-    }    
+    }
     .Map{
         width: 100vw;
         height: 100vh;
     }
+    img[src^='http://www.google.com/mapfiles/marker.png?i=']{opacity: 0.5};
 </style>
