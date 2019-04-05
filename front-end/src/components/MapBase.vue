@@ -39,7 +39,7 @@ function geoLocate(map, marker){
         marker.setPosition(pos);
         marker.setMap(map);
         marker.setLabel(meObj.name);
-        marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
+        marker.setIcon({ url:"https://maps.google.com/mapfiles/ms/icons/red-dot.png"});
         map.setCenter(pos);
         return position;
     }, function() {
@@ -89,9 +89,9 @@ export default {
             let i=0;
             testlist.forEach(function(){
                 let marker3 = new google.maps.Marker;
-                marker3.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
+                marker3.setIcon({ url:"https://maps.google.com/mapfiles/ms/icons/red-dot.png"});
                 if(testlist[i] != meObj[3]){
-                    marker3.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
+                    marker3.setIcon({ url:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
                 }
                 if(testlist[i][4]){
                     marker3.setIcon({ url:"https://img.icons8.com/flat_round/64/000000/error.png",
