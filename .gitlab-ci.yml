@@ -15,17 +15,3 @@ build site:
     expire_in: 1 week
     paths:
       - dist
-
-pages:
-  image: node:latest
-  stage: deploy
-  script:
-    - npm ci
-    - npm run build
-    - mv public public-vue
-    - mv dist public
-  artifacts:
-    paths:
-      - public 
-  only:
-    - master
