@@ -38,7 +38,7 @@ function geoLocate(map, marker){
         };
         marker.setPosition(pos);
         marker.setMap(map);
-        marker.setLabel("Jag");
+        marker.setLabel(meObj.name);
         marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
         map.setCenter(pos);
         return position;

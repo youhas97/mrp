@@ -2,7 +2,7 @@ from channels.generic.websocket import WebsocketConsumer
 import json
 from asgiref.sync import async_to_sync
 from channels.auth import login, get_user, logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
 
@@ -55,13 +55,14 @@ class SyncAinaConsumer(WebsocketConsumer):
                     }))
                     self.close()
                 else:
+                    uname = text_data_json['username']
                     self.send(text_data=json.dumps({
                         'type':'success',
                         'message':'User logged in.',
-                        'id' : User.objects.get(username__exact=text_data_json['username']).id,
+                        'id' : User.objects.get(username__exact=uname).id,
                         'pos' : None,
-                        'name' : text_data_json['username'],
-                        'group' : 14,
+                        'name' : uname,
+                        'group' : User.objects.get(username__exact=uname).groups.get(pk=1),
                         'needHelp' : False
                     }))
                     print("Logged in")
