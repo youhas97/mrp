@@ -83,7 +83,7 @@ export default {
                         'group' : data.group,
                         'needHelp' : data.needHelp
                     }
-                } else if (data.type == 'error') {
+                } else if (data.error == 'error') {
                     alert(data.message);
                 }
             };

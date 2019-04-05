@@ -38,7 +38,7 @@ function geoLocate(map, marker){
         };
         marker.setPosition(pos);
         marker.setMap(map);
-        marker.setLabel("Jag");
+        marker.setLabel(meObj.name);
         marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
         map.setCenter(pos);
         return position;
@@ -63,7 +63,7 @@ export default {
         const map = new google.maps.Map(this.$el);
         meObj = this.$store.state.meObj;
         app = this;
-        //this.recieveMessage(map);
+        this.recieveMessage(map);
         geocoder.geocode({address: 'Arboga'}, (results, status) =>{
             if (status !== 'OK' || !results[0]){
                 throw new Error(status);
