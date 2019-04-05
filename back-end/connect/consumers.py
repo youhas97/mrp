@@ -19,27 +19,40 @@ Types:
 'gps'
 """
 GPS_VALUES = {}
+CHANNEL_GROUP_NAME = "MRP_GLOBAL"
 
 
 class SyncAinaConsumer(WebsocketConsumer):
     def connect(self):
+        # Join a channel group called "MRP_GLOBAL".
+        async_to_sync(self.channel_layer.group_add)(
+            CHANNEL_GROUP_NAME,
+            self.channel_name
+        )
+
         self.accept()
 
     def disconnect(self, close_node):
-        pass
+        # Leave the group on disconnect.
+        async_to_sync(self.channel_layer.group_discard)(
+            CHANNEL_GROUP_NAME,
+            self.channel_name
+        )
 
     def receive(self, text_data=None, bytes_data=None):
         # serialize json string to python dictionary
         text_data_json = json.loads(text_data)
 
         """
-        If client wants to authenticate, they send authorization as the type together with credentials.
+        If client wants to authenticate, they send authorization as the type together 
+        with credentials.
         """
         if text_data_json['type'] == 'authorization':
 
             # authenticate with django models
             user = authenticate(
-                username=text_data_json['username'],        password=text_data_json['password'])
+                username=text_data_json['username'],        
+                password=text_data_json['password'])
 
             if user is not None:
                 # login the user
@@ -77,18 +90,35 @@ class SyncAinaConsumer(WebsocketConsumer):
             pos = text_data_json['pos']
             group = text_data_json['group']
             need_help = text_data_json['needHelp']
-            GPS_VALUES[id] = {'pos' : pos, 'name' : name, 'group' : group, 'needHelp' : need_help}
+            GPS_VALUES[id] = {
+                'pos' : pos, 
+                'name' : name, 
+                'group' : group, 
+                'needHelp' : need_help
+                }
             self.send(text_data=json.dumps({
                 'type': 'gps_values',
                 'gps_list': GPS_VALUES
                 }))
 
+            async_to_sync(self.channel_layer.group_send)(
+                CHANNEL_GROUP_NAME,
+                {
+                    # type has to correspond to a method, global_message.
+                    'type':'global.message',
+                    'gps_list': GPS_VALUES
+                }
+            )
         elif text_data_json['type'] == 'message':
             print(text_data_json['message'])
-        
         else:
             self.send(text_data=json.dumps({
                 'type':'error',
-                'message':'Invalid type sent, closing connection... ' + text_data_json['type']
+                'message':'Invalid type sent, closing connection... ' + 
+                text_data_json['type']
             }))
             self.close()
+
+    
+    def global_message(self, event):
+        print(event)
