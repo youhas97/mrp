@@ -63,7 +63,7 @@ export default {
         const map = new google.maps.Map(this.$el);
         meObj = this.$store.state.meObj;
         app = this;
-        //this.recieveMessage(map);
+        this.recieveMessage(map);
         geocoder.geocode({address: 'Arboga'}, (results, status) =>{
             if (status !== 'OK' || !results[0]){
                 throw new Error(status);
