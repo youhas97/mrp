@@ -9,7 +9,6 @@ In this case, we can use the same websocket in all of our components.
 'websocket' is first assigned a WebSocket in LogIn.vue.
 */
 export default new Vuex.Store({
-<<<<<<< HEAD
   state: {
     websocket: null,
     meObj: {
@@ -18,15 +17,9 @@ export default new Vuex.Store({
       "name": null,
       "group": null,
       "needHelp": null
-  }
+    }
   },
   mutations: {
-=======
-    state: {
-        websocket: null
-    },
-    mutations: {
->>>>>>> origin/feature/channellayer
 
     },
     actions: {
