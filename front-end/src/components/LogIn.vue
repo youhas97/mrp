@@ -74,17 +74,17 @@ export default {
                 /* eslint-enable no-console */
 
                 // If successful login, redirect to map component
-                if(data['type'] == 'success'){                    
+                if(data.type == 'success'){                    
                     app.$router.replace('map');
                     app.$store.state.meObj = {
-                        'id': data['id'],
-                        'pos' : data['pos'],
-                        'name' : data['name'],
-                        'group' : data['group'],
-                        'needHelp' : data['needHelp']
+                        'id': data.id,
+                        'pos' : data.pos,
+                        'name' : data.name,
+                        'group' : data.group,
+                        'needHelp' : data.needHelp
                     }
-                } else {
-                    alert('Incorrect username or password, please try again!');
+                } else if (data.type == 'error') {
+                    alert(data.message);
                 }
             };
 
@@ -92,7 +92,7 @@ export default {
                 /* eslint-disable no-console */
                 console.error('socket closed unexpectedly!', event.code);
                 /* eslint-enable no-console */
-                alert(event.reason)
+                //alert(event.reason)
             };
 
             app.$store.state.websocket.onopen = function() {
