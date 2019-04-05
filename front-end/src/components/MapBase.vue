@@ -130,14 +130,14 @@ export default {
                         map: map,
                         label: personObj.name                    
                     });                
-                    marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/red-dot.png"});
+                    marker.setIcon({ url:"https://maps.google.com/mapfiles/ms/icons/red-dot.png"});
                     if(personObj.needHelp){
                         marker.setIcon({ url:"https://img.icons8.com/flat_round/64/000000/error.png",
                                         scaledSize: new google.maps.Size(30,30)});
                         marker.setAnimation(google.maps.Animation.BOUNCE)
 
                     } else if(personObj.group != meObj.group){                    
-                        marker.setIcon({ url:"http://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
+                        marker.setIcon({ url:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
                     }
                     markerList.push(marker);
                     personList.push(personObj);
