@@ -15,7 +15,8 @@ channels-redis = "*"
 pyopenssl = "*"
 service-identity = "*"
 twisted = {extras = ["http2", "tls"],version = "*"}
-http2 = "*"
+pytest-django = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.7"

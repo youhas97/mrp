@@ -5,6 +5,7 @@ from channels.auth import login, get_user, logout
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import User
 
 
 """
@@ -53,6 +54,10 @@ class SyncAinaConsumer(WebsocketConsumer):
             user = authenticate(
                 username=text_data_json['username'],        
                 password=text_data_json['password'])
+
+            print(text_data_json)
+            
+            print(User.objects.filter(username__exact='admin').exists())
 
             if user is not None:
                 # login the user
