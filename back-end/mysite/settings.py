@@ -129,11 +129,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # Channels
 ASGI_APPLICATION = 'mysite.routing.application'
 
-"""CHANNEL_LAYERS = {
+CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("")]
+            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')]
         }
     }
-}"""
+}

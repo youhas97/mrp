@@ -62,10 +62,17 @@ export default {
             var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
             var heroku_uri = 
                 ws_scheme + "://heroku-mrp-backend.herokuapp.com/ws/connect/";
-            var heroku_uri_ws = "ws://localhost:8002/ws/connect/"
             var local_uri = 
-                ws_scheme + "://" + window.location.hostname + ":8002/ws/connect/";
-            app.$store.state.websocket = new WebSocket(heroku_uri);
+                ws_scheme + "://" + window.location.hostname + ":9000/ws/connect/";
+
+            if(process.env.NODE_ENV == "production") {
+                var uri = heroku_uri
+            }
+            else {
+                uri = local_uri
+            }
+
+            app.$store.state.websocket = new WebSocket(uri);
 
             app.$store.state.websocket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
@@ -92,7 +99,6 @@ export default {
                 /* eslint-disable no-console */
                 console.error('socket closed unexpectedly!', event.code);
                 /* eslint-enable no-console */
-                //alert(event.reason)
             };
 
             app.$store.state.websocket.onopen = function() {
@@ -104,9 +110,9 @@ export default {
                 }))
             };
 
-            /*app.$store.state.websocket.onerror = function(event) {
-                alert(event.)
-            }*/
+            app.$store.state.websocket.onerror = function(event) {
+                alert("Socket unable to connect to server. Code: " + event)
+            }
 
             // AUTHENTICATION WITH HTTP REQUEST ---------------------------------------------
 

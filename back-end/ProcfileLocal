@@ -1,0 +1,1 @@
+daphne: daphne -e ssl:9000:privateKey=server.key:certKey=server.crt mysite.asgi:application
