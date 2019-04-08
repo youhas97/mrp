@@ -15,3 +15,15 @@ build site:
     expire_in: 1 week
     paths:
       - dist
+
+pytests:
+  image: pipenv:latest
+  stage: build
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq redis-server
+    - cd back-end/
+    - pipenv install
+  script:
+    - pipenv run py.test
+  artifacts:
+    expire_in: 1 week
