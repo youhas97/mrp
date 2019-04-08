@@ -57,11 +57,47 @@ export default {
             console.log("pw:", this.password);
             /* eslint-enable no-console */
 
-            var credentials = this.username + ":" + this.password;
+            let app = this;
+
+            app.$store.state.websocket = new WebSocket('ws://heroku-mrp-backend.herokuapp.com/ws/connect/');
+
+            app.$store.state.websocket.onmessage = function(event) {
+                var data = JSON.parse(event.data);
+                /* eslint-disable no-console */
+                console.log("server response: ", data);
+                /* eslint-enable no-console */
+
+                // If successful login, redirect to map component
+                if(data['type'] == 'success'){
+                    app.$router.replace('map');
+                } else {
+                    alert('Incorrect username or password, please try again!');
+                }
+            };
+
+            app.$store.state.websocket.onclose = function(event) {
+                /* eslint-disable no-console */
+                console.error('socket closed unexpectedly!', event.code);
+                /* eslint-enable no-console */
+            };
+
+            app.$store.state.websocket.onopen = function() {
+                /* After connection has opened we send authentication credentials. The type key helps back-end identify what the client wants to do, similar to HTTP requests GET,POST etc. */
+                app.$store.state.websocket.send(JSON.stringify({
+                    'type': 'authorization',
+                    'username': app.username, 
+                    'password': app.password
+                }))
+            };
+
+            // AUTHENTICATION WITH HTTP REQUEST ---------------------------------------------
+
+
+            /*var credentials = this.username + ":" + this.password;
             /*
             Converts bytes from a string to a base64-encoded string. Every character in the string therefore needs to be exactly one byte to encode correctly. 
             */
-            var base64creds = btoa(credentials); 
+            /*var base64creds = btoa(credentials); 
             var authHeader = " Basic " + base64creds;
 
             let that = this;
@@ -76,14 +112,14 @@ export default {
                 }
 
                 /* eslint-disable no-console */
-                console.log("rdy-state: " + this.readyState)
-                console.log("status: " + loginRequest.status);
-                console.log(loginRequest.responseText);
+                //console.log("rdy-state: " + this.readyState)
+                //console.log("status: " + loginRequest.status);
+                //console.log(loginRequest.responseText);
                 /* eslint-enable no-console */
-            };
+            /*};
             loginRequest.open("GET", "http://127.0.0.1:9000/connect/login/", true);
             loginRequest.setRequestHeader("Authorization", authHeader);
-            loginRequest.send();
+            loginRequest.send();*/
         }
     }
 }

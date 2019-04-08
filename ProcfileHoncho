@@ -1,0 +1,2 @@
+backend: cd back-end && python manage.py migrate && daphne -b 0.0.0.0 -p $PORT mysite.asgi:application
+frontend: NODE_DEBUG=net,http node front-end/server.js

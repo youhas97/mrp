@@ -1,0 +1,19 @@
+{
+  "name": "ingripandeapp",
+  "version": "1.0.0",
+  "description": "Used for heroku nodejs buildpack, needs a root package.json",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "heroku-postbuild": "cd front-end && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.liu.se:kandidat11/IngripandeApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=4",
+    "npm": ">=2"
+  }
+}

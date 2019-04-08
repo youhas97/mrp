@@ -10,6 +10,8 @@ requests = "*"
 django = "*"
 mysqlclient = "*"
 djangorestframework = "*"
+channels = "*"
+honcho = "*"
 
 [requires]
 python_version = "3.7"
