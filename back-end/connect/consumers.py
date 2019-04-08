@@ -94,7 +94,7 @@ class SyncAinaConsumer(WebsocketConsumer):
                     'id' : User.objects.get(username__exact=uname).id,
                     'pos' : None,
                     'name' : uname,
-                    'group' : User.objects.get(username__exact=uname).groups.get(pk=1).name,
+                    'group' : '1',
                     'needHelp' : False
                 }))
         else:
