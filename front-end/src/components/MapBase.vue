@@ -2,7 +2,6 @@
     <div class="Map" />
 </template>
 
-
 <script>
 /* eslint-disable no-unused-vars */
 
@@ -198,4 +197,10 @@ body {
     width: 100vw;
     height: 100vh;
 }
+
+img[src^='http://www.google.com/mapfiles/marker.png?i='] {
+    opacity: 0.5
+}
+
+;
 </style>
