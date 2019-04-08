@@ -1,5 +1,5 @@
 <template>
-    <div class="login-wrapper border border-light">
+    <div id="login" class="login-wrapper border border-light">
         <img alt="MRP Logo" src="../assets/logo.png">
         <form class="form-signin"
         @submit.prevent="login">
@@ -180,6 +180,9 @@ input {
     padding-right: 10px;
     border-radius: 30px 10px;
     border: 1px solid #4a86e8;
+}
+#login {
+    margin-top: 5%;
 }
 
 </style>
