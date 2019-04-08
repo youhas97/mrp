@@ -19,7 +19,6 @@ Types:
 'error'
 'gps'
 """
-GPS_VALUES = {}
 CHANNEL_GROUP_NAME = "MRP_GLOBAL"
 
 
@@ -51,6 +50,7 @@ class SyncAinaConsumer(WebsocketConsumer):
             self._login_user(client_data)
 
         elif client_data['type'] == 'gps':
+            print("Received gps data from user.")
             self._receive_gps(client_data)
         elif client_data['type'] == 'message':
             print(client_data['message'])
@@ -61,10 +61,6 @@ class SyncAinaConsumer(WebsocketConsumer):
                 client_data['type']
             }))
             self.close()
-
-    
-    def global_message(self, event):
-        print(event)
         
 
     def _login_user(self, client_data):
@@ -87,15 +83,17 @@ class SyncAinaConsumer(WebsocketConsumer):
                 }))
                 self.close()
             else:
-                uname = client_data['username']
+                uname =  self.scope["user"].username
                 self.send(text_data=json.dumps({
                     'type':'success',
                     'message':'User logged in.',
                     'id' : User.objects.get(username__exact=uname).id,
                     'pos' : None,
-                    'name' : uname,
-                    'group' : '1',
-                    'needHelp' : False
+                    'marker' : None,
+                    'fname' : User.objects.get(username__exact=uname).first_name,
+                    'group' : User.objects.get(username__exact=uname).groups.all()[0].name,
+                    'needHelp' : False,
+                    'username': uname,
                 }))
         else:
             self.send(text_data=json.dumps({
@@ -106,27 +104,22 @@ class SyncAinaConsumer(WebsocketConsumer):
 
 
     def _receive_gps(self, client_data):
-        name = client_data['name']
-        id = client_data['id']
-        pos = client_data['pos']
-        group = client_data['group']
-        need_help = client_data['needHelp']
-        GPS_VALUES[id] = {
-            'pos' : pos, 
-            'name' : name, 
-            'group' : group, 
-            'needHelp' : need_help
-            }
-        self.send(text_data=json.dumps({
-            'type': 'gps_values',
-            'gps_list': GPS_VALUES
-            }))
+        client_data['type'] = 'gps_data'
+        data = {
+            self.scope["user"].username: client_data
+        }
 
         async_to_sync(self.channel_layer.group_send)(
             CHANNEL_GROUP_NAME,
             {
                 # type has to correspond to a method, global_message.
                 'type':'global.message',
-                'gps_list': GPS_VALUES
+                'client_data': data
             }
         )
+
+
+    def global_message(self, event):
+        client_data = event['client_data']
+        print(client_data)
+        self.send(text_data=json.dumps(client_data))

@@ -90,6 +90,7 @@ export default {
                         'group' : data.group,
                         'needHelp' : data.needHelp
                     }
+                    app.$store.state.username = data.username;
                 } else if (data.error == 'error') {
                     alert(data.message);
                 }

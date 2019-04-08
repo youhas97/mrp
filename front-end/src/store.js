@@ -17,7 +17,10 @@ export default new Vuex.Store({
             "name": null,
             "group": null,
             "needHelp": null
-        }
+        },
+        username: "",
+        allUsers: {},
+        allMarkers: {},
     },
     mutations: {
 
