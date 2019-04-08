@@ -2,7 +2,6 @@
     <div class="Map"/>
 </template>
 
-
 <script>
 import gmapsInit from '../utils/gmaps.js'
 
@@ -74,7 +73,7 @@ export default {
             if (status_goal !== 'OK' || !results_goal[0]){
                 throw new Error(status_goal);
             }
-            goal_loc = results_goal            
+            goal_loc = results_goal
         });
         map.setCenter(results[0].geometry.location);
         map.fitBounds(results[0].geometry.viewport);
@@ -128,15 +127,15 @@ export default {
                     let marker = new google.maps.Marker({
                         position: personObj.pos,
                         map: map,
-                        label: personObj.name                    
-                    });                
+                        label: personObj.name
+                    });
                     marker.setIcon({ url:"https://maps.google.com/mapfiles/ms/icons/red-dot.png"});
                     if(personObj.needHelp){
                         marker.setIcon({ url:"https://img.icons8.com/flat_round/64/000000/error.png",
                                         scaledSize: new google.maps.Size(30,30)});
                         marker.setAnimation(google.maps.Animation.BOUNCE)
 
-                    } else if(personObj.group != meObj.group){                    
+                    } else if(personObj.group != meObj.group){
                         marker.setIcon({ url:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png"});
                     }
                     markerList.push(marker);
@@ -184,9 +183,10 @@ export default {
     body{
         margin: 0;
         padding: 0;
-    }    
+    }
     .Map{
         width: 100vw;
         height: 100vh;
     }
+    img[src^='http://www.google.com/mapfiles/marker.png?i=']{opacity: 0.5};
 </style>
