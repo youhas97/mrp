@@ -4,6 +4,7 @@
 
 
 <script>
+/* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 
 import gmapsInit from '../utils/gmaps.js';
@@ -43,7 +44,8 @@ function geoLocate(map) {
         map.setCenter(pos);
         return position;
     }, function() {
-        // Geolocation ej tillåtet
+        // Geolocation ej tillåte
+        console.log("asdasd");
         handleLocationError(true, map.getCenter(), map);
     });
 }
@@ -63,10 +65,10 @@ export default {
         const map = new google.maps.Map(this.$el);
         app = this;
 
-        var updatePos = window.setInterval(app.sendPerson, 500);
+        app.sendPerson();
 
         this.recieveMessage(map);
-        geocoder.geocode({ address: 'Arboga' }, (results, status) => {
+        geocoder.geocode({ address: 'Linköping' }, (results, status) => {
             if (status !== 'OK' || !results[0]) {
                 throw new Error(status);
             }
@@ -85,7 +87,33 @@ export default {
 
 
             if (navigator.geolocation) {
-                let position = geoLocate(map);
+                /* Creation of self data in list */
+                let marker = new google.maps.Marker({
+                    map: map,
+                    label: app.$store.state.username
+                });
+                marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" });
+
+                let username = app.$store.state.username;
+                app.$store.state.allUsers[username] = app.$store.state.meObj;
+                app.$store.state.allMarkers[username] = marker;
+
+                window.setInterval(function() {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        //let position = geoLocate(map);
+                        console.log(position);
+                        let pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        marker.setPosition(pos);
+                        app.$store.state.meObj.pos = pos;
+                        app.sendPerson();
+                    })
+                }, 200);
+
+                //let position = geoLocate(map);
+                //var updatePos = window.setInterval(app.sendPerson, 500);
             } else {
                 handleLocationError(false, map.getCenter(), map);
             }
@@ -96,18 +124,16 @@ export default {
         recieveMessage: function(map) {
             app.$store.state.websocket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
-                /* eslint-disable no-console */
                 console.log("onmessage data: " + event.data);
                 // If message is of 'gps' type then parse the data and distribute the new markers
 
-                let username = Object.keys(data)[0];
+                var username = Object.keys(data)[0];
 
                 if (data[username].type == 'gps_data') {
                     var userData = data[username];
                     if (!(username in app.$store.state.allUsers)) {
-                        /* eslint-disable no-console */
+
                         console.log("pos: " + JSON.stringify(userData));
-                        /* eslint-enable no-console */
 
                         let marker = new google.maps.Marker({
                             position: userData.pos,
@@ -132,20 +158,15 @@ export default {
                         app.$store.state.allMarkers[username] = marker;
                         app.$store.state.allUsers[username] = userData;
 
-
                     } else {
                         app.$store.state.allMarkers[username].setPosition(userData.pos);
                     }
 
-                    if (username == app.$store.state.username) {
-                        app.$store.state.meObj = userData;
-                        app.watchCurrentPosition(app.$store.state.allMarkers[username]);
-                    }
+                    app.$store.state.allUsers[username] = userData;
                 } else {
                     alert('GPS data is unavailable');
                 }
 
-                /* eslint-enable no-console */
 
             };
         },
@@ -177,6 +198,7 @@ export default {
                     };
                     marker.setPosition(pos);
                     app.$store.state.meObj.pos = pos;
+                    app.sendPerson();
                 }, null, {
                     enableHighAccuracy: false,
                     timeout: 5000,
@@ -185,6 +207,8 @@ export default {
         }
     }
 };
+
+/* eslint-enable no-console */
 </script>
 
 <style>
