@@ -1,10 +1,10 @@
 <template>
-    <div id="login" class="login-wrapper border border-light">
+    <div class="login-wrapper border border-light">
         <img alt="MRP Logo" src="../assets/logo.png">
         <form class="form-signin"
-        @submit.prevent="login">
+        @submit.prevent="createAccount">
             <h2 class="form-signin-heading">
-            Please sign in
+            Create an account
             </h2>
 
             <section>
@@ -26,14 +26,41 @@
             <br/>
             </section> 
 
-            <button class="btn btn-lg btn-primary btn-block" type="submit" @release="login">
-            Sign in
-            </button>
+            <section>
+            <label for="inputName" class="sr-only">
+            Name (What other users see)
+            </label> 
+            <br/>
 
-            <button class="btn btn-lg btn-primary btn-block" type="button" @click="routeCreateAccount">
-            Create account
+            <input v-model="name" type="name" id="inputName"
+            class="form-control" placeholder="Name" required> 
+            <br/>
+            </section> 
+
+            <section>
+            <label for="inputGroupnum" class="sr-only">
+            Group Number
+            </label> 
+            <br/>
+
+            <input v-model="groupnum" type="groupnum" id="inputGroupnum"
+            class="form-control" placeholder="Group number" required> 
+            <br/>
+            </section> 
+
+            <!--
+            <button class="btn btn-lg btn-primary btn-block" type="submit" @release="createAccount">
+            Sign in
+            </button> -->
+
+            
+            <button class="btn btn-lg btn-primary btn-block" type="button" @click="createUser">
+            Create
             </button>
             
+            <button class="btn btn-lg btn-primary btn-block" type="button" @click="routeLogin">
+            Back to login
+            </button>
 
         </form>
 
@@ -42,21 +69,28 @@
 
 <script>
 export default {
-    name: 'LogIn',
+    name: 'CreateAccount',
     data: function(){
         return {
             username: '',
-            password: '',
+            password:'',
+            groupnum:'',
+            name:''
         }
     },
     methods: {
-        login: function(){
+        routeLogin: function(){
+            this.$router.replace('/');
+        },
+        createUser: function(){
             /* eslint-disable no-console */
             console.log("username:", this.username);
             console.log("pw:", this.password);
+            console.log("groupnum:", this.groupnum);
+            console.log("name:", this.name);
             /* eslint-enable no-console */
 
-            let app = this;
+           let app = this;
 
             var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
             var heroku_uri = 
@@ -80,15 +114,8 @@ export default {
                 /* eslint-enable no-console */
 
                 // If successful login, redirect to map component
-                if(data.type == 'success'){                    
-                    app.$router.replace('map');
-                    app.$store.state.meObj = {
-                        'id': data.id,
-                        'pos' : data.pos,
-                        'name' : data.name,
-                        'group' : data.group,
-                        'needHelp' : data.needHelp
-                    }
+                if(data.type == 'create_success'){                    
+                    app.$router.replace('login');
                 } else if (data.error == 'error') {
                     alert(data.message);
                 }
@@ -103,49 +130,17 @@ export default {
             app.$store.state.websocket.onopen = function() {
                 /* After connection has opened we send authentication credentials. The type key helps back-end identify what the client wants to do, similar to HTTP requests GET,POST etc. */
                 app.$store.state.websocket.send(JSON.stringify({
-                    'type': 'authorization',
+                    'type': 'create_account',
                     'username': app.username, 
-                    'password': app.password
+                    'password': app.password,
+                    'groupnum': app.groupnum,
+                    'name': app.groupnum
                 }))
             };
 
             app.$store.state.websocket.onerror = function(event) {
                 alert("Socket unable to connect to server. Code: " + event)
             }
-
-            // AUTHENTICATION WITH HTTP REQUEST ---------------------------------------------
-
-
-            /*var credentials = this.username + ":" + this.password;
-            /*
-            Converts bytes from a string to a base64-encoded string. Every character in the string therefore needs to be exactly one byte to encode correctly. 
-            */
-            /*var base64creds = btoa(credentials); 
-            var authHeader = " Basic " + base64creds;
-
-            let that = this;
-            var loginRequest = new XMLHttpRequest();
-            loginRequest.onreadystatechange = function() {
-                // TODO: Redirect to main page after success
-                if (this.readyState == 4 && this.status == 200) {
-                    that.$router.replace('map')
-                }
-                else if (this.readyState == 4 && this.status != 200){
-                    alert('Incorrect username or password, please try again!')
-                }
-
-                /* eslint-disable no-console */
-                //console.log("rdy-state: " + this.readyState)
-                //console.log("status: " + loginRequest.status);
-                //console.log(loginRequest.responseText);
-                /* eslint-enable no-console */
-            /*};
-            loginRequest.open("GET", "http://127.0.0.1:9000/connect/login/", true);
-            loginRequest.setRequestHeader("Authorization", authHeader);
-            loginRequest.send();*/
-        },
-        routeCreateAccount: function(){
-            this.$router.replace('createaccount');
         }
     }
 }
@@ -182,9 +177,6 @@ input {
     padding-right: 10px;
     border-radius: 30px 10px;
     border: 1px solid #4a86e8;
-}
-#login {
-    margin-top: 5%;
 }
 
 </style>

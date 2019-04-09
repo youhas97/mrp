@@ -18,6 +18,7 @@ Types:
 'success'
 'error'
 'gps'
+'create_account'
 """
 GPS_VALUES = {}
 CHANNEL_GROUP_NAME = "MRP_GLOBAL"
@@ -54,6 +55,8 @@ class SyncAinaConsumer(WebsocketConsumer):
             self._receive_gps(client_data)
         elif client_data['type'] == 'message':
             print(client_data['message'])
+        elif client_data['type'] == 'create_account':
+            self._create_account(client_data)
         else:
             self.send(text_data=json.dumps({
                 'type':'error',
@@ -65,7 +68,28 @@ class SyncAinaConsumer(WebsocketConsumer):
     
     def global_message(self, event):
         print(event)
+
+
+    def _create_account(self, client_data):
+        username=client_data['username'] 
+        password=client_data['password'] 
+        name=client_data['name']
+        groupnum=client_data['groupnum']
+
+        # Lägg in kod här för att skapa användare i databasen
+        success = True
         
+        if success:
+            # Skicka bara till front-end att det lyckades, användaren kommer därefter routas till login
+            self.send(text_data=json.dumps({
+                    'type':'create_success'
+                }))
+        else:
+            self.send(text_data=json.dumps({
+                'type':'error',
+                'message':'Unable to create user, closing connection...'
+            }))
+            self.close()
 
     def _login_user(self, client_data):
         # authenticate with django models
