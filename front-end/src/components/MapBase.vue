@@ -64,11 +64,7 @@ export default {
         const map = new google.maps.Map(this.$el);
         app = this;
 
-<<<<<<< HEAD
-        //var updatePos = window.setInterval(app.sendPerson, 500);
-=======
         app.sendPerson();
->>>>>>> feature/gpssharing
 
         this.recieveMessage(map);
         geocoder.geocode({ address: 'Linköping' }, (results, status) => {
@@ -90,10 +86,6 @@ export default {
 
 
             if (navigator.geolocation) {
-<<<<<<< HEAD
-                let position = geoLocate(map);
-                app.sendPerson();
-=======
                 /* Creation of self data in list */
                 let marker = new google.maps.Marker({
                     map: map,
@@ -121,7 +113,6 @@ export default {
 
                 //let position = geoLocate(map);
                 //var updatePos = window.setInterval(app.sendPerson, 500);
->>>>>>> feature/gpssharing
             } else {
                 handleLocationError(false, map.getCenter(), map);
             }
@@ -206,16 +197,7 @@ export default {
                     };
                     marker.setPosition(pos);
                     app.$store.state.meObj.pos = pos;
-<<<<<<< HEAD
-
-                    var delayInMilliseconds = 500;
-                    setTimeout(function() {
-                        //Code will be executed after 10ms
-                        app.sendPerson();
-                    }, delayInMilliseconds);
-=======
                     app.sendPerson();
->>>>>>> feature/gpssharing
                 }, null, {
                     enableHighAccuracy: false,
                     timeout: 5000,
