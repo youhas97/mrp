@@ -88,7 +88,7 @@ export default {
                         'needHelp': data.needHelp
                     }
                     app.$store.state.username = data.username;
-                } else if (data.error == 'error') {
+                } else if (data.type == 'error') {
                     alert(data.message);
                 }
             };
