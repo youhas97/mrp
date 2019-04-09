@@ -177,7 +177,12 @@ export default {
                     };
                     marker.setPosition(pos);
                     app.$store.state.meObj.pos = pos;
-                    app.sendPerson();
+
+                    var delayInMilliseconds = 500;
+                    setTimeout(function() {
+                        //Code will be executed after 10ms
+                        app.sendPerson();
+                    }, delayInMilliseconds);
                 }, null, {
                     enableHighAccuracy: false,
                     timeout: 5000,
