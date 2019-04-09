@@ -89,7 +89,6 @@ class SyncAinaConsumer(WebsocketConsumer):
                     'message':'User logged in.',
                     'id' : User.objects.get(username__exact=uname).id,
                     'pos' : None,
-                    'marker' : None,
                     'fname' : User.objects.get(username__exact=uname).first_name,
                     'group' : User.objects.get(username__exact=uname).groups.all()[0].name,
                     'needHelp' : False,
