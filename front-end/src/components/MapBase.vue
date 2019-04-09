@@ -62,7 +62,7 @@ export default {
         const map = new google.maps.Map(this.$el);
         app = this;
 
-        var updatePos = window.setInterval(app.sendPerson, 500);
+        //var updatePos = window.setInterval(app.sendPerson, 500);
 
         this.recieveMessage(map);
         geocoder.geocode({ address: 'Arboga' }, (results, status) => {
@@ -85,6 +85,7 @@ export default {
 
             if (navigator.geolocation) {
                 let position = geoLocate(map);
+                app.sendPerson();
             } else {
                 handleLocationError(false, map.getCenter(), map);
             }
@@ -176,6 +177,7 @@ export default {
                     };
                     marker.setPosition(pos);
                     app.$store.state.meObj.pos = pos;
+                    app.sendPerson();
                 }, null, {
                     enableHighAccuracy: false,
                     timeout: 5000,
