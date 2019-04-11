@@ -9,7 +9,7 @@
     
                 <section>
                     <label for="inputUsername" class="sr-only"> Username 
-                    </label>
+                        </label>
                     <br/>
     
                     <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Username" required autgofocus>
@@ -17,8 +17,8 @@
     
                 <section>
                     <label for="inputPassword" class="sr-only">
-                        Password
-                    </label>
+                            Password
+                        </label>
                     <br/>
     
                     <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
@@ -26,21 +26,23 @@
                 </section>
     
                 <button class="btn btn-lg btn-primary btn-block" type="submit" @release="login">
-                    Sign in
-                </button>
-
+                        Sign in
+                    </button>
+    
                 <!--
-                <button class="btn btn-lg btn-primary btn-block" type="button" @click="create">
-                Create user
-                </button>
-                -->
-
+                    <button class="btn btn-lg btn-primary btn-block" type="button" @click="create">
+                    Create user
+                    </button>
+                    -->
+    
             </form>
         </div>
     </div>
 </template>
 
 <script>
+let app;
+
 export default {
     name: 'LogIn',
     data: function() {
@@ -51,12 +53,11 @@ export default {
     },
     methods: {
         login: function() {
+            app = this;
             /* eslint-disable no-console */
             console.log("username:", this.username);
             console.log("pw:", this.password);
             /* eslint-enable no-console */
-
-            let app = this;
 
             var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
             var heroku_uri =
@@ -80,15 +81,20 @@ export default {
 
                 // If successful login, redirect to map component
                 if (data.type == 'success') {
-                    app.$router.replace('cc');
-                    app.$store.state.users.meObj = {
-                        'id': data.id,
-                        'pos': data.pos,
-                        'name': data.name,
-                        'group': data.group,
-                        'needHelp': data.needHelp
+                    if (data.group == "ledning") {
+                        app.$store.state.users.meObj = null;
+                        app.$router.replace('cc');
+                    } else {
+                        app.$store.state.users.meObj = {
+                            'id': data.id,
+                            'pos': data.pos,
+                            'name': data.name,
+                            'group': data.group,
+                            'needHelp': data.needHelp
+                        }
+                        app.$store.state.users.username = data.username;
+                        app.$router.replace('mobile');
                     }
-                    app.$store.state.users.username = data.username;
                 } else if (data.type == 'error') {
                     alert(data.message);
                 }

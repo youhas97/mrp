@@ -64,7 +64,9 @@ export default {
         const map = new google.maps.Map(this.$el);
         app = this;
 
-        app.sendPerson();
+        if (app.$store.state.users.meObj !== null) {
+            app.sendPerson();
+        }
 
         /* Create click listener for alert creation */
         google.maps.event.addListener(map, 'click', function(event) {
@@ -113,8 +115,8 @@ export default {
 
             let goalWindow = new google.maps.InfoWindow;
 
-
-            if (navigator.geolocation) {
+            if (navigator.geolocation && app.$store.state.users.meObj !== null) {
+                console.log("name: " + app.$store.state.users.username);
                 /* Creation of self data in list */
                 let marker = new google.maps.Marker({
                     map: map,
@@ -187,7 +189,7 @@ export default {
                 }
 
 
-            };
+                 };
         },
         changeMarker: function(marker, userData) {
             if (userData.needHelp) {
@@ -197,7 +199,7 @@ export default {
                 });
                 marker.setAnimation(google.maps.Animation.BOUNCE)
 
-            } else if (userData.group != app.$store.state.users.meObj.group) {
+            } else if (app.$store.state.users.meObj !== null && userData.group != app.$store.state.users.meObj.group) {
                 marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" });
                 marker.setAnimation(google.maps.Animation.NONE);
             } else {
