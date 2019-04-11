@@ -90,57 +90,49 @@ export default {
             console.log("name:", this.name);
             /* eslint-enable no-console */
 
-           let app = this;
-
-            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            let app = this;
+            
             var heroku_uri = 
-                ws_scheme + "://heroku-mrp-backend.herokuapp.com/ws/connect/";
+                "https://heroku-mrp-backend.herokuapp.com/connect/register/";
             var local_uri = 
-                ws_scheme + "://" + window.location.hostname + ":9000/ws/connect/";
+                "https://" + window.location.hostname + ":9000/connect/register/";
 
-            if(process.env.NODE_ENV == "production") {
+            if(process.env.NODE_ENV == "production")
                 var uri = heroku_uri
-            }
-            else {
+            else 
                 uri = local_uri
-            }
 
-            app.$store.state.websocket = new WebSocket(uri);
-
-            app.$store.state.websocket.onmessage = function(event) {
-                var data = JSON.parse(event.data);
-                /* eslint-disable no-console */
-                console.log("server response: ", data);
-                /* eslint-enable no-console */
-
-                // If successful login, redirect to map component
-                if(data.type == 'create_success'){                    
-                    app.$router.replace('login');
-                } else if (data.error == 'error') {
-                    alert(data.message);
+            var createUserRequest = new XMLHttpRequest();
+            createUserRequest.onreadystatechange = function() {
+                // TODO: Redirect to main page after success
+                if (this.readyState == 4 && this.status == 200) {
+                    //that.$router.replace('map')
+                    alert("Registration successful! Welcome to MRP!");
                 }
-            };
+                else if (this.readyState == 4 && this.status != 200){
+                    alert('Incorrect username or password, please try again!');
+                }
 
-            app.$store.state.websocket.onclose = function(event) {
                 /* eslint-disable no-console */
-                console.error('socket closed unexpectedly!', event.code);
+                //console.log("rdy-state: " + this.readyState)
+                //console.log("status: " + createUserRequest.status);
+                //console.log(createUserRequest.responseText);
                 /* eslint-enable no-console */
             };
-
-            app.$store.state.websocket.onopen = function() {
-                /* After connection has opened we send authentication credentials. The type key helps back-end identify what the client wants to do, similar to HTTP requests GET,POST etc. */
-                app.$store.state.websocket.send(JSON.stringify({
-                    'type': 'create_account',
-                    'username': app.username, 
-                    'password': app.password,
-                    'groupnum': app.groupnum,
-                    'name': app.groupnum
-                }))
-            };
-
-            app.$store.state.websocket.onerror = function(event) {
-                alert("Socket unable to connect to server. Code: " + event)
-            }
+            createUserRequest.open("POST", uri);
+            createUserRequest.setRequestHeader(
+                "Content-Type", "application/json;charset=UTF-8"
+            );
+            /* eslint-disable no-console */
+            console.log("Sending create user.");
+            createUserRequest.send(JSON.stringify({
+                'username': app.username,
+                'password': app.password,
+                'groupnum': app.groupnum,
+                'name': app.groupnum
+            }));
+            console.log("Create user sent.");
+            /* eslint-enable no-console */
         }
     }
 }

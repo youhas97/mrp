@@ -56,15 +56,23 @@ def invalid_credentials(reason="Invalid username and/or password."):
     response.status = 400
     return response
 
+
 @csrf_exempt
 def register(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        uname=data['username']
-        pword=data['password']
+    if request.method == 'OPTIONS':
+        response = HttpResponse()
+        response['Access-Control-Allow-Origin'] = "*"
+        response['Access-Control-Allow-Methods'] = 'POST'
+        response['Access-Control-Allow-Headers'] = 'accept, content-type, charset'
+        return response
+    elif request.method == 'POST':
+        data = json.loads(request.body.decode("utf-8"))
+        print(data)
+        uname=data["username"]
+        pword=data["password"]
         print("Username: " + uname + "\nPassword: " + pword)
         # TODO: Check username and password for validity before creating a user.
-        """if not re.match("^[a-zA-Z]+[a-zA-Z0-9_+-.@]*$", uname) \
+        """if not re.match("^[a-zA-Z]+[a-zA-Z0-9_-@]*$", uname) \
             or len(uname) < 8 \
             or len(uname) > 150 \
             or len(pword) < 8 \
@@ -72,8 +80,14 @@ def register(request):
             return invalid_credentials()"""
 
 
-        User.objects.create(
+
+        """User.objects.create(
             username=data['username'], 
             password=make_password(data['password'])
-            )
+        )"""
+
         return HttpResponse()
+    else:
+        response = HttpResponse("Method not allowed")
+        response.status = 405
+        return response
