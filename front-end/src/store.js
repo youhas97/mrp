@@ -12,7 +12,7 @@ In this case, we can use the same websocket in all of our components.
 const moduleAlert = {
     state: {
         alerting: false,
-
+        allAlerts: {},
     }
 }
 

@@ -12,6 +12,7 @@ import gmapsInit from '../utils/gmaps.js';
 let google;
 let positionTimer;
 let app;
+let alertID = 0;
 
 
 /*
@@ -65,9 +66,11 @@ export default {
 
         app.sendPerson();
 
+        /* Create click listener for alert creation */
         google.maps.event.addListener(map, 'click', function(event) {
             if (app.$store.state.alert.alerting) {
                 var marker = new google.maps.Marker({
+                    id: alertID,
                     position: event.latLng,
                     map: map
                 });
@@ -78,6 +81,17 @@ export default {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 map.panTo(event.latLng);
                 app.$store.state.alert.alerting = false;
+                app.$store.state.alert.allAlerts[alertID] = marker;
+
+
+                /* Listen for clicks on marker */
+                google.maps.event.addListener(marker, 'click', function(event) {
+                    app.$store.state.alert.allAlerts[marker.id] = null;
+                    marker.setMap(null);
+                });
+
+                alertID += 1;
+
             }
         });
 
