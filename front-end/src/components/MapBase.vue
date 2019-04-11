@@ -44,7 +44,6 @@ function geoLocate(map) {
         return position;
     }, function() {
         // Geolocation ej tillåte
-        console.log("asdasd");
         handleLocationError(true, map.getCenter(), map);
     });
 }
@@ -100,7 +99,7 @@ export default {
                 window.setInterval(function() {
                     navigator.geolocation.getCurrentPosition(function(position) {
                         //let position = geoLocate(map);
-                        console.log(position);
+                        //console.log(position);
                         let pos = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude
@@ -123,7 +122,7 @@ export default {
         recieveMessage: function(map) {
             app.$store.state.websocket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
-                console.log("onmessage data: " + event.data);
+                //console.log("onmessage data: " + event.data);
                 // If message is of 'gps' type then parse the data and distribute the new markers
 
                 var username = Object.keys(data)[0];
@@ -132,7 +131,7 @@ export default {
                     var userData = data[username];
                     if (!(username in app.$store.state.allUsers)) {
 
-                        console.log("pos: " + JSON.stringify(userData));
+                        //console.log("pos: " + JSON.stringify(userData));
 
                         let marker = new google.maps.Marker({
                             position: userData.pos,
@@ -140,27 +139,18 @@ export default {
                             label: username
                         });
 
-                        if (userData.needHelp) {
-                            marker.setIcon({
-                                url: "https://img.icons8.com/flat_round/64/000000/error.png",
-                                scaledSize: new google.maps.Size(30, 30)
-                            });
-                            marker.setAnimation(google.maps.Animation.BOUNCE)
-
-                        } else if (userData.group != app.$store.state.meObj.group) {
-                            marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" });
-                        } else {
-                            marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" });
-                        }
+                        app.changeMarker(marker, userData);
 
 
                         app.$store.state.allMarkers[username] = marker;
                         app.$store.state.allUsers[username] = userData;
 
                     } else {
-                        app.$store.state.allMarkers[username].setPosition(userData.pos);
+                        let marker = app.$store.state.allMarkers[username];
+                        app.changeMarker(marker, userData);
+                        marker.setPosition(userData.pos);
                     }
-
+                    
                     app.$store.state.allUsers[username] = userData;
                 } else {
                     alert('GPS data is unavailable');
@@ -168,6 +158,22 @@ export default {
 
 
             };
+        },
+        changeMarker: function(marker, userData) {
+            if (userData.needHelp) {
+                marker.setIcon({
+                    url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                    scaledSize: new google.maps.Size(30, 30)
+                });
+                marker.setAnimation(google.maps.Animation.BOUNCE)
+
+            } else if (userData.group != app.$store.state.meObj.group) {
+                marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" });
+                marker.setAnimation(google.maps.Animation.NONE);
+            } else {
+                marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" });
+                marker.setAnimation(google.maps.Animation.NONE);
+            }
         },
         sendPerson: function() {
             // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.

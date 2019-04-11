@@ -15,6 +15,7 @@ export default {
             buttonText: "Förstärkning",
             timerStarted: false,
             timeoutId: 0,
+            intervalId: 0,
             backUpCalled: false,
             secs: 0,
         }
@@ -22,26 +23,31 @@ export default {
 
     methods: {
         hold: function() {
-            this.buttonText = "Håll i 3 sekunder";
+            var secs = 3;
+            this.buttonText = "Håll i " + secs + " sekunder";
             this.timerStarted = true;
-            let that = this;
+            let app = this;
+            this.intervalId = setInterval(function(){
+                secs -= 1;
+                app.buttonText = "Håll i " + secs + " sekunder";
+            },1000)
             this.timeoutId = setTimeout(function() {
-                //Map.needBackUp=true;
-                that.timerStarted = false;
-                if (that.backUpCalled) {
-                    //Send to backend that user need backup
-                    that.backUpCalled = false;
-                } else {
-                    that.backUpCalled = true;
-                }
-                that.fetchButtonText();
-            }, 3000);
+                clearInterval(app.intervalId);
+                app.timerStarted = false;
+                app.backUpCalled = !app.backUpCalled;
+                app.$store.state.meObj.needHelp = app.backUpCalled;
+                /* eslint-disable no-console */
+                console.log("backup: ", app.$store.state.meObj.needHelp);
+                /* eslint-enable no-console */
+                app.fetchButtonText();
+            }, secs * 1000);
 
 
         },
         release: function() {
             if (this.timerStarted) {
                 //Backup regreted
+                clearInterval(this.intervalId);
                 clearTimeout(this.timeoutId);
             }
             this.timerStarted = false;
