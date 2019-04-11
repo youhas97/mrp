@@ -1,21 +1,15 @@
 <template>
     <div>
         <button @mousedown="hold" @mouseup="release" @mouseout="release">
-                {{buttonText}}
-            </button>
-        <Map/>
+        {{buttonText}}
+        </button>
     </div>
 </template>
 
 <script>
-import Map from './MapBase';
-
 
 export default {
     name: 'Larm',
-    components: {
-        Map
-    },
     data: function() {
         return {
             buttonText: "Förstärkning",
@@ -74,11 +68,6 @@ export default {
 </script>
 
 <style scoped>
-html,
-body {
-    height: 100%;
-    margin: 0;
-}
 
 button {
     margin: 10px;

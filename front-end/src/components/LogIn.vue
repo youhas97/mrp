@@ -8,7 +8,7 @@
     
             <section>
                 <label for="inputUsername" class="sr-only"> Username 
-                </label>
+                    </label>
                 <br/>
     
                 <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Username" required autgofocus>
@@ -16,8 +16,8 @@
     
             <section>
                 <label for="inputPassword" class="sr-only">
-                Password
-                </label>
+                    Password
+                    </label>
                 <br/>
     
                 <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
@@ -25,14 +25,14 @@
             </section>
     
             <button class="btn btn-lg btn-primary btn-block" type="submit" @release="login">
-                Sign in
-                </button>
+                    Sign in
+                    </button>
     
             <!--
-                <button class="btn btn-lg btn-primary btn-block" type="button" @click="create">
-                Create user
-                </button>
-                -->
+                    <button class="btn btn-lg btn-primary btn-block" type="button" @click="create">
+                    Create user
+                    </button>
+                    -->
     
         </form>
     
@@ -79,7 +79,7 @@ export default {
 
                 // If successful login, redirect to map component
                 if (data.type == 'success') {
-                    app.$router.replace('map');
+                    app.$router.replace('mobile');
                     app.$store.state.meObj = {
                         'id': data.id,
                         'pos': data.pos,
@@ -148,6 +148,12 @@ export default {
 </script>
 
 <style scoped>
+body {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url("../assets/background.png");
+}
+
 h2 {
     color: #4a86e8;
     font-weight: bold;

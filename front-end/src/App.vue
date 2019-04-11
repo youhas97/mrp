@@ -8,11 +8,6 @@
 </script>
 
 <style>
-body {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-image: url("./assets/background.png");
-}
 img {
     display: block;
     margin-left: auto;
