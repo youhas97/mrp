@@ -81,14 +81,14 @@ export default {
                 // If successful login, redirect to map component
                 if (data.type == 'success') {
                     app.$router.replace('cc');
-                    app.$store.state.meObj = {
+                    app.$store.state.users.meObj = {
                         'id': data.id,
                         'pos': data.pos,
                         'name': data.name,
                         'group': data.group,
                         'needHelp': data.needHelp
                     }
-                    app.$store.state.username = data.username;
+                    app.$store.state.users.username = data.username;
                 } else if (data.type == 'error') {
                     alert(data.message);
                 }

@@ -104,13 +104,13 @@ export default {
                 /* Creation of self data in list */
                 let marker = new google.maps.Marker({
                     map: map,
-                    label: app.$store.state.username
+                    label: app.$store.state.users.username
                 });
                 marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" });
 
-                let username = app.$store.state.username;
-                app.$store.state.allUsers[username] = app.$store.state.meObj;
-                app.$store.state.allMarkers[username] = marker;
+                let username = app.$store.state.users.username;
+                app.$store.state.users.allUsers[username] = app.$store.state.users.meObj;
+                app.$store.state.users.allMarkers[username] = marker;
 
                 window.setInterval(function() {
                     navigator.geolocation.getCurrentPosition(function(position) {
@@ -121,7 +121,7 @@ export default {
                             lng: position.coords.longitude
                         };
                         marker.setPosition(pos);
-                        app.$store.state.meObj.pos = pos;
+                        app.$store.state.users.meObj.pos = pos;
                         app.sendPerson();
                     })
                 }, 200);
@@ -145,7 +145,7 @@ export default {
 
                 if (data[username].type == 'gps_data') {
                     var userData = data[username];
-                    if (!(username in app.$store.state.allUsers)) {
+                    if (!(username in app.$store.state.users.allUsers)) {
 
                         //console.log("pos: " + JSON.stringify(userData));
 
@@ -158,16 +158,16 @@ export default {
                         app.changeMarker(marker, userData);
 
 
-                        app.$store.state.allMarkers[username] = marker;
-                        app.$store.state.allUsers[username] = userData;
+                        app.$store.state.users.allMarkers[username] = marker;
+                        app.$store.state.users.allUsers[username] = userData;
 
                     } else {
-                        let marker = app.$store.state.allMarkers[username];
+                        let marker = app.$store.state.users.allMarkers[username];
                         app.changeMarker(marker, userData);
                         marker.setPosition(userData.pos);
                     }
 
-                    app.$store.state.allUsers[username] = userData;
+                    app.$store.state.users.allUsers[username] = userData;
                 } else {
                     alert('GPS data is unavailable');
                 }
@@ -183,7 +183,7 @@ export default {
                 });
                 marker.setAnimation(google.maps.Animation.BOUNCE)
 
-            } else if (userData.group != app.$store.state.meObj.group) {
+            } else if (userData.group != app.$store.state.users.meObj.group) {
                 marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" });
                 marker.setAnimation(google.maps.Animation.NONE);
             } else {
@@ -193,7 +193,7 @@ export default {
         },
         sendPerson: function() {
             // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.
-            let meObj = app.$store.state.meObj;
+            let meObj = app.$store.state.users.meObj;
 
             app.$store.state.websocket.send(JSON.stringify({
                 'type': 'gps',
@@ -218,7 +218,7 @@ export default {
                         lng: position.coords.longitude
                     };
                     marker.setPosition(pos);
-                    app.$store.state.meObj.pos = pos;
+                    app.$store.state.users.meObj.pos = pos;
                     app.sendPerson();
                 }, null, {
                     enableHighAccuracy: false,

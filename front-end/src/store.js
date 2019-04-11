@@ -16,9 +16,8 @@ const moduleAlert = {
     }
 }
 
-export default new Vuex.Store({
+const moduleUsers = {
     state: {
-        websocket: null,
         meObj: {
             "id": null,
             "pos": null,
@@ -36,8 +35,15 @@ export default new Vuex.Store({
     actions: {
 
     },
+}
+
+export default new Vuex.Store({
+    state: {
+        websocket: null,
+    },
     modules: {
         alert: moduleAlert,
+        users: moduleUsers
     }
 
 })
