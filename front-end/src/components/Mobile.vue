@@ -1,18 +1,18 @@
 <template>
     <div id="mobile">
-        <Larm/>
+        <Backup/>
         <Map/>
     </div>
 </template>
 
 <script>
-import Larm from './Larm'
+import Backup from './Backup'
 import Map from './MapBase'
 
 export default {
     name: 'Mobile',
     components: {
-        Larm,
+        Backup,
         Map
     },
 }

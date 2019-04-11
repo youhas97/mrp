@@ -9,7 +9,7 @@
 <script>
 
 export default {
-    name: 'Larm',
+    name: 'Backup',
     data: function() {
         return {
             buttonText: "Förstärkning",
