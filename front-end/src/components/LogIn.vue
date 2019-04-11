@@ -1,41 +1,42 @@
 <template>
-    <div id="login" class="login-wrapper border border-light">
-        <img alt="MRP Logo" src="../assets/logo.png">
-        <form class="form-signin" @submit.prevent="login">
-            <h2 class="form-signin-heading">
-                Please sign in
-            </h2>
+    <div id="background">
+        <div id="login" class="login-wrapper border border-light">
+            <img alt="MRP Logo" src="../assets/logo.png">
+            <form class="form-signin" @submit.prevent="login">
+                <h2 class="form-signin-heading">
+                    Please sign in
+                </h2>
     
-            <section>
-                <label for="inputUsername" class="sr-only"> Username 
+                <section>
+                    <label for="inputUsername" class="sr-only"> Username 
                     </label>
-                <br/>
+                    <br/>
     
-                <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Username" required autgofocus>
-            </section>
+                    <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Username" required autgofocus>
+                </section>
     
-            <section>
-                <label for="inputPassword" class="sr-only">
-                    Password
+                <section>
+                    <label for="inputPassword" class="sr-only">
+                        Password
                     </label>
-                <br/>
+                    <br/>
     
-                <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-                <br/>
-            </section>
+                    <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                    <br/>
+                </section>
     
-            <button class="btn btn-lg btn-primary btn-block" type="submit" @release="login">
+                <button class="btn btn-lg btn-primary btn-block" type="submit" @release="login">
                     Sign in
-                    </button>
-    
-            <!--
-                    <button class="btn btn-lg btn-primary btn-block" type="button" @click="create">
-                    Create user
-                    </button>
-                    -->
-    
-        </form>
-    
+                </button>
+
+                <!--
+                <button class="btn btn-lg btn-primary btn-block" type="button" @click="create">
+                Create user
+                </button>
+                -->
+
+            </form>
+        </div>
     </div>
 </template>
 
@@ -148,10 +149,11 @@ export default {
 </script>
 
 <style scoped>
-body {
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-image: url("../assets/background.png");
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
 }
 
 h2 {
@@ -192,5 +194,13 @@ input {
 
 #login {
     margin-top: 5%;
+}
+
+#background {
+    height: 95vh;
+    border-top: 1px solid rgba(0, 0, 0, 0);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url("../assets/background.png");
 }
 </style>

@@ -7,13 +7,7 @@
 <script>
 </script>
 
-<style>
-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 300px;
-}
+<style scoped>
 #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

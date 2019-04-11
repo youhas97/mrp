@@ -216,7 +216,7 @@ export default {
 /* eslint-enable no-console */
 </script>
 
-<style>
+<style scoped>
 html,
 body {
     margin: 0;
