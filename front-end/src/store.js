@@ -8,6 +8,14 @@ Shares the state of Vuex Store across all Vue components.
 In this case, we can use the same websocket in all of our components.
 'websocket' is first assigned a WebSocket in LogIn.vue.
 */
+
+const moduleAlert = {
+    state: {
+        alerting: false,
+        buttonText: "Larma"
+    }
+}
+
 export default new Vuex.Store({
     state: {
         websocket: null,
@@ -27,5 +35,9 @@ export default new Vuex.Store({
     },
     actions: {
 
+    },
+    modules: {
+        alert: moduleAlert,
     }
+
 })

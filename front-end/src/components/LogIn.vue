@@ -80,7 +80,7 @@ export default {
 
                 // If successful login, redirect to map component
                 if (data.type == 'success') {
-                    app.$router.replace('mobile');
+                    app.$router.replace('cc');
                     app.$store.state.meObj = {
                         'id': data.id,
                         'pos': data.pos,

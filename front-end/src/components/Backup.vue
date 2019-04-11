@@ -8,6 +8,8 @@
 
 <script>
 
+let app;
+
 export default {
     name: 'Backup',
     data: function() {
@@ -26,7 +28,7 @@ export default {
             var secs = 3;
             this.buttonText = "Håll i " + secs + " sekunder";
             this.timerStarted = true;
-            let app = this;
+            app = this;
             this.intervalId = setInterval(function(){
                 secs -= 1;
                 app.buttonText = "Håll i " + secs + " sekunder";

@@ -65,6 +65,22 @@ export default {
 
         app.sendPerson();
 
+        google.maps.event.addListener(map, 'click', function(event) {
+            if (app.$store.state.alert.alerting) {
+                var marker = new google.maps.Marker({
+                    position: event.latLng,
+                    map: map
+                });
+                marker.setIcon({
+                    url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                    scaledSize: new google.maps.Size(30, 30)
+                });
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+                map.panTo(event.latLng);
+                app.$store.state.alert.alerting = false;
+            }
+        });
+
         this.recieveMessage(map);
         geocoder.geocode({ address: 'Linköping' }, (results, status) => {
             if (status !== 'OK' || !results[0]) {
@@ -150,7 +166,7 @@ export default {
                         app.changeMarker(marker, userData);
                         marker.setPosition(userData.pos);
                     }
-                    
+
                     app.$store.state.allUsers[username] = userData;
                 } else {
                     alert('GPS data is unavailable');
