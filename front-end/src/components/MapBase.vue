@@ -12,7 +12,6 @@ import gmapsInit from '../utils/gmaps.js';
 let google;
 let positionTimer;
 let app;
-let alertID = 0;
 
 
 /*
@@ -72,9 +71,10 @@ export default {
         google.maps.event.addListener(map, 'click', function(event) {
             if (app.$store.state.alert.alerting) {
                 var marker = new google.maps.Marker({
-                    id: alertID,
+                    id: app.$store.state.alert.alertID,
                     position: event.latLng,
-                    map: map
+                    map: map,
+                    draggable: true
                 });
                 marker.setIcon({
                     url: "https://img.icons8.com/flat_round/64/000000/error.png",
@@ -83,7 +83,7 @@ export default {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 map.panTo(event.latLng);
                 app.$store.state.alert.alerting = false;
-                app.$store.state.alert.allAlerts[alertID] = marker;
+                app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
 
 
                 /* Listen for clicks on marker */
@@ -92,7 +92,7 @@ export default {
                     marker.setMap(null);
                 });
 
-                alertID += 1;
+                app.$store.state.alert.alertID += 1;
 
             }
         });
@@ -189,7 +189,7 @@ export default {
                 }
 
 
-                 };
+            };
         },
         changeMarker: function(marker, userData) {
             if (userData.needHelp) {
@@ -199,13 +199,25 @@ export default {
                 });
                 marker.setAnimation(google.maps.Animation.BOUNCE)
 
-            } else if (app.$store.state.users.meObj !== null && userData.group != app.$store.state.users.meObj.group) {
-                marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" });
-                marker.setAnimation(google.maps.Animation.NONE);
-            } else {
+            } else if (app.$store.state.users.meObj !== null && userData.group == app.$store.state.users.meObj.group) {
                 marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" });
                 marker.setAnimation(google.maps.Animation.NONE);
+            } else {
+                marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" });
+                marker.setAnimation(google.maps.Animation.NONE);
             }
+
+            let alert = app.$store.state.alert.allAlerts[app.$store.state.alert.alertID];
+            console.log("alert: " + alert);
+            if (alert != null) {
+                if (app.$store.state.alert.alerting) {
+                    alert.setMap(map);
+                } else {
+                    alert.setMap(null);
+                }
+            }
+            app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = alert;
+
         },
         sendPerson: function() {
             // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.
