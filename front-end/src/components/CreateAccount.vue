@@ -106,8 +106,8 @@ export default {
             createUserRequest.onreadystatechange = function() {
                 // TODO: Redirect to main page after success
                 if (this.readyState == 4 && this.status == 200) {
-                    //that.$router.replace('map')
                     alert(this.response);
+                    app.$router.replace('map')
                 }
                 else if (this.readyState == 4 && this.status != 200){
                     alert(this.response);

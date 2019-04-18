@@ -17,6 +17,7 @@ service-identity = "*"
 twisted = {extras = ["http2", "tls"],version = "*"}
 pytest-django = "*"
 pytest-asyncio = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.7"
