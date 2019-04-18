@@ -135,16 +135,16 @@ class SyncAinaConsumer(WebsocketConsumer):
         pos = client_data['pos']
         group = client_data['group']
         need_help = client_data['needHelp']
-        GPS_VALUES[id] = {
+        GPS_VALUES = {
             'pos' : pos, 
             'name' : name, 
             'group' : group, 
             'needHelp' : need_help
-            }
+        }
         self.send(text_data=json.dumps({
             'type': 'gps_values',
             'gps_list': GPS_VALUES
-            }))
+        }))
 
         async_to_sync(self.channel_layer.group_send)(
             CHANNEL_GROUP_NAME,
