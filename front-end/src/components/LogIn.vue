@@ -9,7 +9,7 @@
     
                 <section>
                     <label for="inputUsername" class="sr-only"> Username 
-                        </label>
+                    </label>
                     <br/>
     
                     <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Username" required autgofocus>
@@ -18,7 +18,7 @@
                 <section>
                     <label for="inputPassword" class="sr-only">
                             Password
-                        </label>
+                    </label>
                     <br/>
     
                     <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
@@ -26,8 +26,12 @@
                 </section>
     
                 <button class="btn btn-lg btn-primary btn-block" type="submit" @release="login">
-                        Sign in
-                    </button>
+                    Sign in
+                </button>
+
+                <button class="btn btn-lg btn-primary btn-block" type="button" @click="routeCreateAccount">
+                    Create account
+                </button>
     
                 <!--
                     <button class="btn btn-lg btn-primary btn-block" type="button" @click="create">
@@ -149,6 +153,9 @@ export default {
             loginRequest.open("GET", "http://127.0.0.1:9000/connect/login/", true);
             loginRequest.setRequestHeader("Authorization", authHeader);
             loginRequest.send();*/
+        },
+        routeCreateAccount: function(){
+            this.$router.replace('createaccount');
         }
     }
 }

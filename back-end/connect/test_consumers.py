@@ -9,16 +9,16 @@ from django.contrib.auth.models import User, Group
 
 # Create your tests here.
 
+pytestmark = [pytest.mark.django_db(transaction=True), pytest.mark.asyncio]
 
-@pytest.mark.asyncio
-@pytest.mark.django_db(transaction=True)
+
 async def test_consumer_successful_login():
     """Test if we can login successfully."""
     communicator = WebsocketCommunicator(application, "ws/connect/")
     connected, subprotocol = await communicator.connect()
-    User.objects.create_user(username='admin', password='kandidat11')
+    user = User.objects.create_user(username='admin', password='kandidat11')
     Group.objects.create(name="test_group")
-    Group.objects.get(name="test_group").user_set.add(User.objects.get(username="admin"))
+    Group.objects.get(name="test_group").user_set.add(user)
     assert connected
     await communicator.send_json_to({
         'type':'authorization',
@@ -33,8 +33,6 @@ async def test_consumer_successful_login():
     await communicator.disconnect()
 
 
-@pytest.mark.asyncio
-@pytest.mark.django_db(transaction=True)
 async def test_consumer_fail_login():
     """Test that a user that doesn't exist can't perform a login."""
     communicator = WebsocketCommunicator(application, "ws/connect/")
@@ -53,8 +51,6 @@ async def test_consumer_fail_login():
     await communicator.disconnect()
 
 
-@pytest.mark.asyncio
-@pytest.mark.django_db(transaction=True)
 async def test_sending_invalid_type():
     communicator = WebsocketCommunicator(application, "ws/connect/")
     connected, subprotocol = await communicator.connect()

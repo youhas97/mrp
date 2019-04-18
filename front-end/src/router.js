@@ -4,6 +4,7 @@ import LogIn from './components/LogIn.vue'
 import Map from './components/MapBase.vue'
 import Mobile from './components/Mobile.vue'
 import CommandCenter from './components/CommandCenter.vue'
+import CreateAccount from './components/CreateAccount.vue'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
             path: '/cc',
             name: 'commandcenter',
             component: CommandCenter
+        },
+        {
+          path: '/createaccount',
+          name: 'createaccount',
+          component: CreateAccount
         }
     ]
 })
