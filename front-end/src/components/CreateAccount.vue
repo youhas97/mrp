@@ -107,16 +107,13 @@ export default {
                 // TODO: Redirect to main page after success
                 if (this.readyState == 4 && this.status == 200) {
                     //that.$router.replace('map')
-                    alert("Registration successful! Welcome to MRP!");
+                    alert(this.response);
                 }
                 else if (this.readyState == 4 && this.status != 200){
-                    alert('Incorrect username or password, please try again!');
+                    alert(this.response);
                 }
-
                 /* eslint-disable no-console */
-                //console.log("rdy-state: " + this.readyState)
-                //console.log("status: " + createUserRequest.status);
-                //console.log(createUserRequest.responseText);
+                console.log(this)
                 /* eslint-enable no-console */
             };
             createUserRequest.open("POST", uri);
