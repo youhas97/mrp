@@ -84,10 +84,15 @@ export default {
                 map.panTo(event.latLng);
                 app.$store.state.alert.alerting = false;
                 app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
+                app.sendAlert(marker.id);
 
 
                 /* Listen for clicks on marker */
                 google.maps.event.addListener(marker, 'click', function(event) {
+                    app.$store.state.websocket.send(JSON.stringify({
+                        'type': 'gps_cancel_alert',
+                        'id': marker.id
+                    }));
                     app.$store.state.alert.allAlerts[marker.id] = null;
                     marker.setMap(null);
                 });
@@ -152,11 +157,38 @@ export default {
     },
     methods: {
         recieveMessage: function(map) {
+            /* Receive socket message from server. */
+
             app.$store.state.websocket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
                 //console.log("onmessage data: " + event.data);
-                // If message is of 'gps' type then parse the data and distribute the new markers
 
+                if (data.type == 'gps_alert') {
+                    // make alert visible on the map.
+                    let marker = new google.maps.Marker({
+                        id: data.id,
+                        position: data.pos,
+                        map: map,
+                        draggable: false
+                    });
+                    marker.setIcon({
+                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                        scaledSize: new google.maps.Size(30, 30)
+                    });
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    map.panTo(data.pos);
+                    app.$store.state.alert.allAlerts[data.id] = marker;
+                    console.log(data);
+                    return;
+                } else if (data.type == 'gps_cancel_alert') {
+                    // remove alert from the map.
+                    let marker = app.$store.state.alert.allAlerts[data.id];
+                    marker.setMap(null);
+                    app.$store.state.alert.allAlerts[data.id] = null;
+                    return;
+                }
+
+                // If message is of 'gps' type then parse the data and distribute the new markers
                 var username = Object.keys(data)[0];
 
                 if (data[username].type == 'gps_data') {
@@ -207,7 +239,7 @@ export default {
                 marker.setAnimation(google.maps.Animation.NONE);
             }
 
-            let alert = app.$store.state.alert.allAlerts[app.$store.state.alert.alertID];
+            /*let alert = app.$store.state.alert.allAlerts[app.$store.state.alert.alertID];
             console.log("alert: " + alert);
             if (alert != null) {
                 if (app.$store.state.alert.alerting) {
@@ -216,7 +248,7 @@ export default {
                     alert.setMap(null);
                 }
             }
-            app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = alert;
+            app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = alert;*/
 
         },
         sendPerson: function() {
@@ -237,6 +269,13 @@ export default {
 
             }))
 
+        },
+        sendAlert: function(alertID) {
+            app.$store.state.websocket.send(JSON.stringify({
+                'type': 'gps_alert',
+                'id': alertID,
+                'pos':app.$store.state.alert.allAlerts[alertID].position
+            }));
         },
         watchCurrentPosition: function(marker) {
             positionTimer = navigator.geolocation.watchPosition(
