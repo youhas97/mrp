@@ -1,1 +1,6 @@
 .vscode/
+pytest.ini
+.coverage
+.coveragerc
+htmlcov/*
+staticfiles/
