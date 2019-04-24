@@ -178,13 +178,17 @@ export default {
                     marker.setAnimation(google.maps.Animation.BOUNCE);
                     map.panTo(data.pos);
                     app.$store.state.alert.allAlerts[data.id] = marker;
-                    console.log(data);
                     return;
                 } else if (data.type == 'gps_cancel_alert') {
                     // remove alert from the map.
-                    let marker = app.$store.state.alert.allAlerts[data.id];
-                    marker.setMap(null);
+                    app.$store.state.alert.allAlerts[data.id].setMap(null);
                     app.$store.state.alert.allAlerts[data.id] = null;
+                    return;
+                } else if (data.type == 'logout') {
+                    // delete user and its marker upon logout.
+                    app.$store.state.users.allMarkers[data.username].setMap(null);
+                    app.$store.state.users.allMarkers[data.username] = null;
+                    app.$store.state.users.allUsers[data.username] = null;
                     return;
                 }
 
@@ -194,8 +198,8 @@ export default {
                 if (data[username].type == 'gps_data') {
                     var userData = data[username];
                     if (!(username in app.$store.state.users.allUsers)) {
-
-                        //console.log("pos: " + JSON.stringify(userData));
+                        /* New user has appeared! Create a marker for their position and
+                        add them to the list of all users. */
 
                         let marker = new google.maps.Marker({
                             position: userData.pos,
@@ -205,11 +209,10 @@ export default {
 
                         app.changeMarker(marker, userData);
 
-
                         app.$store.state.users.allMarkers[username] = marker;
                         app.$store.state.users.allUsers[username] = userData;
-
                     } else {
+                        /* Update position of already existing users. */
                         let marker = app.$store.state.users.allMarkers[username];
                         app.changeMarker(marker, userData);
                         marker.setPosition(userData.pos);

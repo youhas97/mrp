@@ -102,8 +102,21 @@ export default {
 
             app.$store.state.websocket.onclose = function(event) {
                 /* eslint-disable no-console */
-                console.error('socket closed unexpectedly!', event.code);
+                console.log("Websocket onclose event.");
                 /* eslint-enable no-console */
+                
+                if(event.wasClean) {
+                    // if socket was closed cleanly, redirect to login page. 
+                    /* eslint-disable no-console */
+                    console.log("Event was clean.");
+                    /* eslint-enable no-console */
+                    app.$router.replace('login');
+                } else {
+                    alert('Socket closed unexpectedly! Attempting to reconnect...');
+                    /* TODO: Reconnect to server here. On failed reconnect, redirect
+                    to login page. */
+                    app.$router.replace('login');
+                }
             };
 
             app.$store.state.websocket.onopen = function() {

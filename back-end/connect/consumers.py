@@ -34,10 +34,19 @@ class SyncAinaConsumer(WebsocketConsumer):
 
     def disconnect(self, close_node):
         # Leave the group on disconnect.
+        async_to_sync(self.channel_layer.group_send)(
+            CHANNEL_GROUP_NAME,
+            {
+                'type': 'logout',
+                'sent_from': self.scope["user"].username,
+                'username': self.scope["user"].username
+            }
+        )
         async_to_sync(self.channel_layer.group_discard)(
             CHANNEL_GROUP_NAME,
             self.channel_name
         )
+        async_to_sync(logout)(self.scope)
 
     def receive(self, text_data=None, bytes_data=None):
         # serialize json string to python dictionary
@@ -138,3 +147,8 @@ class SyncAinaConsumer(WebsocketConsumer):
         # Don't broadcast to self.
         if(self.scope["user"].username != event['sent_from']):
             self.send(text_data=json.dumps(client_data))
+
+    def logout(self, event):
+        if(self.scope["user"].username != event['sent_from']):
+            self.send(text_data=json.dumps(event))
+        
