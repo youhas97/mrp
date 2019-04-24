@@ -2,3 +2,5 @@ __pycache__
 *~
 front-end/dist/
 .vscode/
+back-end/.coverage
+back-end/htmlcov/*
