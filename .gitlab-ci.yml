@@ -3,11 +3,6 @@ cache:
   paths:
     - node_modules/
 
-services:
-  - redis:latest
-
-Host: redis
-
 build site:
   image: node:latest
   stage: build
@@ -23,6 +18,9 @@ build site:
 
 pytests:
   image: python:3.7
+  services:
+  - redis:latest
+  Host: redis
   stage: test
   before_script:
     - apt-get update -qq
