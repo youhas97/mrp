@@ -25,6 +25,6 @@ pytests:
     - pipenv install
     - cd back-end/
   script:
-    - pipenv run py.test
+    - pipenv run py.test --capture=no --ds=config.settings.test --flake8 .
   artifacts:
     expire_in: 1 week
