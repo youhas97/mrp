@@ -18,13 +18,15 @@ build site:
 
 pytests:
   image: python:3.7
+  services:
+  - redis:latest
   stage: test
   before_script:
-    - apt-get update -qq && apt-get install -y -qq redis-server
+    - apt-get update -qq
     - pip3 install pipenv
-    - cd back-end/
     - pipenv install
+    - cd back-end/
   script:
-    - pipenv run py.test
+    - pipenv run py.test .
   artifacts:
     expire_in: 1 week
