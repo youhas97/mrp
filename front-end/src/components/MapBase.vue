@@ -163,7 +163,7 @@ export default {
                 var data = JSON.parse(event.data);
                 //console.log("onmessage data: " + event.data);
 
-                if (data.type == 'gps_alert') {
+                if (data.type == 'gps_alert' || data.type == 'gps_alert_user') {
                     // make alert visible on the map.
                     let marker = new google.maps.Marker({
                         id: data.id,
@@ -211,6 +211,17 @@ export default {
 
                         app.$store.state.users.allMarkers[username] = marker;
                         app.$store.state.users.allUsers[username] = userData;
+
+                        /* If current user is ledning, then make sure we send all
+                        the alerts to the new user that has appeared. */
+                        if(!app.$store.state.users.meObj) {
+                            for (let key in Object.keys(app.$store.state.alert.allAlerts)) {
+                                app.sendAlertTo(
+                                    username, 
+                                    app.$store.state.alert.allAlerts[key].id
+                                )
+                            }
+                        }
                     } else {
                         /* Update position of already existing users. */
                         let marker = app.$store.state.users.allMarkers[username];
@@ -277,7 +288,15 @@ export default {
             app.$store.state.websocket.send(JSON.stringify({
                 'type': 'gps_alert',
                 'id': alertID,
-                'pos':app.$store.state.alert.allAlerts[alertID].position
+                'pos': app.$store.state.alert.allAlerts[alertID].position
+            }));
+        },
+        sendAlertTo: function(username, alertID) {
+            app.$store.state.websocket.send(JSON.stringify({
+                'type': 'gps_alert_user',
+                'id': alertID,
+                'pos': app.$store.state.alert.allAlerts[alertID].position,
+                'sent_to': username
             }));
         },
         watchCurrentPosition: function(marker) {

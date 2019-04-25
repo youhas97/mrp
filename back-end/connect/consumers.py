@@ -67,6 +67,8 @@ class SyncAinaConsumer(WebsocketConsumer):
             self._receive_alert(client_data)
         elif client_data['type'] == 'gps_cancel_alert':
             self._receive_alert(client_data)
+        elif client_data['type'] == 'gps_alert_user':
+            self._send_alert_to_user(client_data)
         else:
             self.send(text_data=json.dumps({
                 'type':'error',
@@ -140,6 +142,26 @@ class SyncAinaConsumer(WebsocketConsumer):
                 'client_data': client_data
             }
         )
+
+    def _send_alert_to_user(self, client_data):
+        """ Receives alert messages aimed at a specific user. """
+        async_to_sync(self.channel_layer.group_send)(
+            CHANNEL_GROUP_NAME,
+            {
+                'type': 'send.alert.to',
+                'sent_from': self.scope["user"].username,
+                'client_data': client_data
+            }
+        )
+
+    
+    def send_alert_to(self, event):
+        """ Makes sure the event is sent to the specific user specified by the
+        'sent_to' key in the client_data. """
+        client_data = event['client_data']
+        if self.scope["user"].username != event['sent_from'] \
+                and self.scope["user"].username == client_data['sent_to']:
+            self.send(text_data=json.dumps(client_data))
 
 
     def broadcast_event(self, event):
