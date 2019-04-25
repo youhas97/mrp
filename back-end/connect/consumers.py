@@ -53,7 +53,8 @@ class SyncAinaConsumer(WebsocketConsumer):
         client_data = json.loads(text_data)
 
         """
-        If client wants to authenticate, they send authorization as the type together with credentials.
+        If client wants to authenticate, they send authorization as the type together 
+        with credentials.
         """
         if client_data['type'] == 'authorization':
             self._login_user(client_data)
