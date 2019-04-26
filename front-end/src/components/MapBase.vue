@@ -209,6 +209,18 @@ export default {
 
                         app.changeMarker(marker, userData);
 
+                        let windowContent = '<div id="content">'+
+                            `<h1>${username}</h1>`+
+                            `<p>Group: ${userData.group}</p>`+
+                            '</div>';
+
+                        let infowindow = new google.maps.InfoWindow({
+                            content: windowContent
+                        });
+                        marker.addListener('click', function() {
+                            infowindow.open(map, marker);
+                        });
+
                         app.$store.state.users.allMarkers[username] = marker;
                         app.$store.state.users.allUsers[username] = userData;
 
