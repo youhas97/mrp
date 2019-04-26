@@ -12,3 +12,4 @@ omit =
     *routing.py*,
     manage.py,
     polls/*
+    conftest.py

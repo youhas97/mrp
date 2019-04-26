@@ -32,6 +32,7 @@ class SyncAinaConsumer(WebsocketConsumer):
         )
 
         self.accept()
+        
 
     def disconnect(self, close_node):
         # Leave the group on disconnect.
@@ -49,6 +50,7 @@ class SyncAinaConsumer(WebsocketConsumer):
         )
         async_to_sync(logout)(self.scope)
 
+
     def receive(self, text_data=None, bytes_data=None):
         # serialize json string to python dictionary
         client_data = json.loads(text_data)
@@ -64,8 +66,6 @@ class SyncAinaConsumer(WebsocketConsumer):
             self._receive_gps(client_data)
         elif client_data['type'] == 'message':
             print(client_data['message'])
-        elif client_data['type'] == 'create_account':
-            self._create_account(client_data)
         elif client_data['type'] == 'gps_alert':
             self._receive_alert(client_data)
         elif client_data['type'] == 'gps_cancel_alert':
@@ -80,27 +80,6 @@ class SyncAinaConsumer(WebsocketConsumer):
             }))
             self.close()
 
-
-    def _create_account(self, client_data):
-        username=client_data['username'] 
-        password=client_data['password'] 
-        name=client_data['name']
-        groupnum=client_data['groupnum']
-
-        # Lägg in kod här för att skapa användare i databasen
-        success = True
-        
-        if success:
-            # Skicka bara till front-end att det lyckades, användaren kommer därefter routas till login
-            self.send(text_data=json.dumps({
-                    'type':'create_success'
-                }))
-        else:
-            self.send(text_data=json.dumps({
-                'type':'error',
-                'message':'Unable to create user, closing connection...'
-            }))
-            self.close()
 
     def _login_user(self, client_data):
         # authenticate with django models
@@ -156,12 +135,12 @@ class SyncAinaConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
             CHANNEL_GROUP_NAME,
             {
-                # type has to correspond to a method, global_message.
                 'type': 'broadcast.event',
                 'sent_from': self.scope["user"].username,
                 'client_data': data
             }
         )
+
 
     def _receive_alert(self, client_data):
         async_to_sync(self.channel_layer.group_send)(
@@ -172,6 +151,7 @@ class SyncAinaConsumer(WebsocketConsumer):
                 'client_data': client_data
             }
         )
+
 
     def _send_alert_to_user(self, client_data):
         """ Receives alert messages aimed at a specific user. """
@@ -200,6 +180,8 @@ class SyncAinaConsumer(WebsocketConsumer):
         if(self.scope["user"].username != event['sent_from']):
             self.send(text_data=json.dumps(client_data))
 
+
     def logout(self, event):
+        # Don't broadcast to self.
         if(self.scope["user"].username != event['sent_from']):
             self.send(text_data=json.dumps(event))

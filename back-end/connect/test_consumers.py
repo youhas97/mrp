@@ -161,3 +161,5 @@ async def test_consumer_send_gps(create_and_connect_users):
     assert client_data2['type'] == 'gps_data'
     assert client_data2['position'] == 'Flen'
 
+
+
