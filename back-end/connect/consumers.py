@@ -142,6 +142,12 @@ class SyncAinaConsumer(WebsocketConsumer):
 
 
     def _receive_gps(self, client_data):
+        """ Receives gps data from client and broadcasts it to all users.
+        
+        It will first mutate the type to 'gps_data', since this is what is recognized
+        by the client. It will then create a new dictionary with the client's username
+        as key, and the client_data as value, and then broadcast it.  """
+        
         client_data['type'] = 'gps_data'
         data = {
             self.scope["user"].username: client_data
@@ -190,7 +196,6 @@ class SyncAinaConsumer(WebsocketConsumer):
 
     def broadcast_event(self, event):
         client_data = event['client_data']
-        print(client_data)
         # Don't broadcast to self.
         if(self.scope["user"].username != event['sent_from']):
             self.send(text_data=json.dumps(client_data))
@@ -198,4 +203,3 @@ class SyncAinaConsumer(WebsocketConsumer):
     def logout(self, event):
         if(self.scope["user"].username != event['sent_from']):
             self.send(text_data=json.dumps(event))
-        
