@@ -13,6 +13,7 @@ const moduleAlert = {
     state: {
         alerting: false,
         allAlerts: {},
+        alertID: 0,
     }
 }
 

@@ -12,7 +12,6 @@ import gmapsInit from '../utils/gmaps.js';
 let google;
 let positionTimer;
 let app;
-let alertID = 0;
 
 
 /*
@@ -72,9 +71,10 @@ export default {
         google.maps.event.addListener(map, 'click', function(event) {
             if (app.$store.state.alert.alerting) {
                 var marker = new google.maps.Marker({
-                    id: alertID,
+                    id: app.$store.state.alert.alertID,
                     position: event.latLng,
-                    map: map
+                    map: map,
+                    draggable: true
                 });
                 marker.setIcon({
                     url: "https://img.icons8.com/flat_round/64/000000/error.png",
@@ -83,16 +83,21 @@ export default {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 map.panTo(event.latLng);
                 app.$store.state.alert.alerting = false;
-                app.$store.state.alert.allAlerts[alertID] = marker;
+                app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
+                app.sendAlert(marker.id);
 
 
                 /* Listen for clicks on marker */
                 google.maps.event.addListener(marker, 'click', function(event) {
+                    app.$store.state.websocket.send(JSON.stringify({
+                        'type': 'gps_cancel_alert',
+                        'id': marker.id
+                    }));
                     app.$store.state.alert.allAlerts[marker.id] = null;
                     marker.setMap(null);
                 });
 
-                alertID += 1;
+                app.$store.state.alert.alertID += 1;
 
             }
         });
@@ -152,18 +157,49 @@ export default {
     },
     methods: {
         recieveMessage: function(map) {
+            /* Receive socket message from server. */
+
             app.$store.state.websocket.onmessage = function(event) {
                 var data = JSON.parse(event.data);
                 //console.log("onmessage data: " + event.data);
-                // If message is of 'gps' type then parse the data and distribute the new markers
 
+                if (data.type == 'gps_alert' || data.type == 'gps_alert_user') {
+                    // make alert visible on the map.
+                    let marker = new google.maps.Marker({
+                        id: data.id,
+                        position: data.pos,
+                        map: map,
+                        draggable: false
+                    });
+                    marker.setIcon({
+                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                        scaledSize: new google.maps.Size(30, 30)
+                    });
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    map.panTo(data.pos);
+                    app.$store.state.alert.allAlerts[data.id] = marker;
+                    return;
+                } else if (data.type == 'gps_cancel_alert') {
+                    // remove alert from the map.
+                    app.$store.state.alert.allAlerts[data.id].setMap(null);
+                    app.$store.state.alert.allAlerts[data.id] = null;
+                    return;
+                } else if (data.type == 'logout') {
+                    // delete user and its marker upon logout.
+                    app.$store.state.users.allMarkers[data.username].setMap(null);
+                    app.$store.state.users.allMarkers[data.username] = null;
+                    app.$store.state.users.allUsers[data.username] = null;
+                    return;
+                }
+
+                // If message is of 'gps' type then parse the data and distribute the new markers
                 var username = Object.keys(data)[0];
 
                 if (data[username].type == 'gps_data') {
                     var userData = data[username];
                     if (!(username in app.$store.state.users.allUsers)) {
-
-                        //console.log("pos: " + JSON.stringify(userData));
+                        /* New user has appeared! Create a marker for their position and
+                        add them to the list of all users. */
 
                         let marker = new google.maps.Marker({
                             position: userData.pos,
@@ -173,11 +209,21 @@ export default {
 
                         app.changeMarker(marker, userData);
 
-
                         app.$store.state.users.allMarkers[username] = marker;
                         app.$store.state.users.allUsers[username] = userData;
 
+                        /* If current user is ledning, then make sure we send all
+                        the alerts to the new user that has appeared. */
+                        if(!app.$store.state.users.meObj) {
+                            for (let key in Object.keys(app.$store.state.alert.allAlerts)) {
+                                app.sendAlertTo(
+                                    username, 
+                                    app.$store.state.alert.allAlerts[key].id
+                                )
+                            }
+                        }
                     } else {
+                        /* Update position of already existing users. */
                         let marker = app.$store.state.users.allMarkers[username];
                         app.changeMarker(marker, userData);
                         marker.setPosition(userData.pos);
@@ -189,7 +235,7 @@ export default {
                 }
 
 
-                 };
+            };
         },
         changeMarker: function(marker, userData) {
             if (userData.needHelp) {
@@ -199,13 +245,25 @@ export default {
                 });
                 marker.setAnimation(google.maps.Animation.BOUNCE)
 
-            } else if (app.$store.state.users.meObj !== null && userData.group != app.$store.state.users.meObj.group) {
-                marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" });
-                marker.setAnimation(google.maps.Animation.NONE);
-            } else {
+            } else if (app.$store.state.users.meObj !== null && userData.group == app.$store.state.users.meObj.group) {
                 marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png" });
                 marker.setAnimation(google.maps.Animation.NONE);
+            } else {
+                marker.setIcon({ url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png" });
+                marker.setAnimation(google.maps.Animation.NONE);
             }
+
+            /*let alert = app.$store.state.alert.allAlerts[app.$store.state.alert.alertID];
+            console.log("alert: " + alert);
+            if (alert != null) {
+                if (app.$store.state.alert.alerting) {
+                    alert.setMap(map);
+                } else {
+                    alert.setMap(null);
+                }
+            }
+            app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = alert;*/
+
         },
         sendPerson: function() {
             // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.
@@ -225,6 +283,21 @@ export default {
 
             }))
 
+        },
+        sendAlert: function(alertID) {
+            app.$store.state.websocket.send(JSON.stringify({
+                'type': 'gps_alert',
+                'id': alertID,
+                'pos': app.$store.state.alert.allAlerts[alertID].position
+            }));
+        },
+        sendAlertTo: function(username, alertID) {
+            app.$store.state.websocket.send(JSON.stringify({
+                'type': 'gps_alert_user',
+                'id': alertID,
+                'pos': app.$store.state.alert.allAlerts[alertID].position,
+                'sent_to': username
+            }));
         },
         watchCurrentPosition: function(marker) {
             positionTimer = navigator.geolocation.watchPosition(

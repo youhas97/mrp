@@ -37,9 +37,9 @@ export default {
                 clearInterval(app.intervalId);
                 app.timerStarted = false;
                 app.backUpCalled = !app.backUpCalled;
-                app.$store.state.meObj.needHelp = app.backUpCalled;
+                app.$store.state.users.meObj.needHelp = app.backUpCalled;
                 /* eslint-disable no-console */
-                console.log("backup: ", app.$store.state.meObj.needHelp);
+                console.log("backup: ", app.$store.state.users.meObj.needHelp);
                 /* eslint-enable no-console */
                 app.fetchButtonText();
             }, secs * 1000);

@@ -75,6 +75,7 @@ export default {
                 uri = local_uri
             }
 
+
             app.$store.state.websocket = new WebSocket(uri);
 
             app.$store.state.websocket.onmessage = function(event) {
@@ -106,8 +107,35 @@ export default {
 
             app.$store.state.websocket.onclose = function(event) {
                 /* eslint-disable no-console */
-                console.error('socket closed unexpectedly!', event.code);
+                console.log("Websocket onclose event.");
                 /* eslint-enable no-console */
+                
+                if(event.wasClean) {
+                    // if socket was closed cleanly, redirect to login page. 
+                    /* eslint-disable no-console */
+                    console.log("Event was clean.");
+                    /* eslint-enable no-console */
+
+                    /* vue.router.replace() behavior is odd when the page is refreshed. 
+                    It will replace the 
+                    window, but then return to the old one. The workaround is to replace
+                    the history and then redirect to the login page using window.location
+                    in order to flush the entirety of the page. This will give similar
+                    behavior to vue.router.replace(). */
+                    window.history.replaceState(null, "", 
+                        `https://${window.location.hostname}:${window.location.port}`);
+                    window.location.href = 
+                        `https://${window.location.hostname}:${window.location.port}`;
+                    
+                } else {
+                    alert('Socket closed unexpectedly! Attempting to reconnect...');
+                    /* TODO: Reconnect to server here. On failed reconnect, redirect
+                    to login page. */
+                    window.history.replaceState(null, "", 
+                        `https://${window.location.hostname}:${window.location.port}`);
+                    window.location.href = 
+                        `https://${window.location.hostname}:${window.location.port}`;
+                }
             };
 
             app.$store.state.websocket.onopen = function() {
