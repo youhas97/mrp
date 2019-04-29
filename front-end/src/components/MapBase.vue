@@ -67,6 +67,30 @@ export default {
             app.sendPerson();
         }
 
+        /* This function will be called when search function 
+        has been triggered with vue.$root.$emit('locateUser').*/
+        this.$root.$on('locateUser', (username) => {
+            let pos = app.$store.state.users.allMarkers[username].position;
+            map.panTo(pos);
+            map.setZoom(15);
+            map.setCenter(pos);
+            google.maps.event.trigger(
+                app.$store.state.users.allMarkers[username],
+                'click'
+            );
+        });
+
+        /* This function will be called when a user calls for backup
+        and the marker icon has to be changed. */
+        this.$root.$on('changeMarker', () => {
+            this.changeMarker(
+                this.$store.state.users.allMarkers[
+                    this.$store.state.users.username
+                ],
+                this.$store.state.users.meObj
+            );
+        });
+
         /* Create click listener for alert creation */
         google.maps.event.addListener(map, 'click', function(event) {
             if (app.$store.state.alert.alerting) {
@@ -85,7 +109,6 @@ export default {
                 app.$store.state.alert.alerting = false;
                 app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
                 app.sendAlert(marker.id);
-
 
                 /* Listen for clicks on marker */
                 google.maps.event.addListener(marker, 'click', function(event) {
@@ -186,9 +209,9 @@ export default {
                     return;
                 } else if (data.type == 'logout') {
                     // delete user and its marker upon logout.
-                    app.$store.state.users.allMarkers[data.username].setMap(null);
-                    app.$store.state.users.allMarkers[data.username] = null;
-                    app.$store.state.users.allUsers[data.username] = null;
+                    app.$store.state.users.allMarkers[data.username].setMap(null);  
+                    delete app.$store.state.users.allMarkers[data.username];
+                    delete app.$store.state.users.allUsers[data.username];
                     return;
                 }
 
@@ -204,7 +227,8 @@ export default {
                         let marker = new google.maps.Marker({
                             position: userData.pos,
                             map: map,
-                            label: username
+                            label: username,
+                            optimized: false
                         });
 
                         app.changeMarker(marker, userData);
@@ -265,20 +289,8 @@ export default {
                 marker.setAnimation(google.maps.Animation.NONE);
             }
 
-            /*let alert = app.$store.state.alert.allAlerts[app.$store.state.alert.alertID];
-            console.log("alert: " + alert);
-            if (alert != null) {
-                if (app.$store.state.alert.alerting) {
-                    alert.setMap(map);
-                } else {
-                    alert.setMap(null);
-                }
-            }
-            app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = alert;*/
-
         },
         sendPerson: function() {
-            // Skriv kod här som skickar "position" till backend som packar det i en lista new_pos.
             let meObj = app.$store.state.users.meObj;
 
             app.$store.state.websocket.send(JSON.stringify({
@@ -288,11 +300,6 @@ export default {
                 'fname': meObj.fname,
                 'group': meObj.group,
                 'needHelp': meObj.needHelp
-                /*
-                'type': 'gps',
-                'client_data': app.$store.state.meObj,
-                */
-
             }))
 
         },

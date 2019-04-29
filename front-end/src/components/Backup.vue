@@ -1,8 +1,13 @@
 <template>
-    <div>
-        <button @mousedown="hold" @mouseup="release" @mouseout="release">
+    <div class="navBar">
+        <button id="backupButton" @mousedown="hold" @mouseup="release" @mouseout="release">
         {{buttonText}}
         </button>
+
+        <form id="searchForm" @submit.prevent="searchUser">
+            <input v-model="searchText" type="text" placeholder="Search user...">
+            <button type="submit" @release="searchUser">Search</button>
+        </form>
     </div>
 </template>
 
@@ -20,6 +25,8 @@ export default {
             intervalId: 0,
             backUpCalled: false,
             secs: 0,
+
+            searchText: ""
         }
     },
 
@@ -38,6 +45,8 @@ export default {
                 app.timerStarted = false;
                 app.backUpCalled = !app.backUpCalled;
                 app.$store.state.users.meObj.needHelp = app.backUpCalled;
+                // Tell MapBase component to change marker.
+                app.$root.$emit('changeMarker');
                 /* eslint-disable no-console */
                 console.log("backup: ", app.$store.state.users.meObj.needHelp);
                 /* eslint-enable no-console */
@@ -61,6 +70,15 @@ export default {
             } else {
                 this.buttonText = "Förstärkning";
             }
+        },
+        searchUser: function() {
+            var user = this.$store.state.users.allUsers[this.searchText];
+            if(!user)
+                alert("User does not exist.");
+            else {
+                alert("User found!");
+                this.$root.$emit('locateUser', this.searchText);
+            }
         }
         /*
                 countSecs: function(){
@@ -77,7 +95,7 @@ export default {
 
 <style scoped>
 
-button {
+#backupButton {
     margin: 10px;
     font-size: 200%;
     border-radius: 10px;
