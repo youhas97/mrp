@@ -185,8 +185,6 @@ export default {
             } else {
                 handleLocationError(false, map.getCenter(), map);
             }
-
-            app.calcRoute();
         });
 
     },
@@ -213,7 +211,12 @@ export default {
                     marker.setAnimation(google.maps.Animation.BOUNCE);
                     map.panTo(data.pos);
                     app.$store.state.alert.allAlerts[data.id] = marker;
-                    app.calcRoute();
+                    app.calcRoute(
+                        app.$store.state.users.allMarkers[
+                            app.$store.state.users.username
+                        ].position,
+                        marker.position
+                    );
                     return;
                 } else if (data.type == 'gps_cancel_alert') {
                     // remove alert from the map.
@@ -347,14 +350,12 @@ export default {
                     maximumAge: Infinity
                 });
         },
-        calcRoute: function() {
-            var start = 'Flen';
-            var end = 'Katrineholm';
+        calcRoute: function(start, end) {
             var request = {
                 origin: start,
                 destination: end,
                 travelMode: 'DRIVING'
-            };
+            };  
             this.directionsService.route(request, (result, status) => {
                 if (status == 'OK')
                     this.directionsDisplay.setDirections(result);
