@@ -57,11 +57,21 @@ function geoGoal(map, goalWindow, results) {
 
 export default {
     name: 'Map',
+    data: function() {
+        return {
+            directionsService: null,
+            directionsDisplay: null
+        }
+    },
     async mounted() {
         google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
         const map = new google.maps.Map(this.$el);
         app = this;
+
+        app.directionsService = new google.maps.DirectionsService();
+        app.directionsDisplay = new google.maps.DirectionsRenderer();
+        app.directionsDisplay.setMap(map);
 
         if (app.$store.state.users.meObj !== null) {
             app.sendPerson();
@@ -175,6 +185,8 @@ export default {
             } else {
                 handleLocationError(false, map.getCenter(), map);
             }
+
+            app.calcRoute();
         });
 
     },
@@ -201,11 +213,12 @@ export default {
                     marker.setAnimation(google.maps.Animation.BOUNCE);
                     map.panTo(data.pos);
                     app.$store.state.alert.allAlerts[data.id] = marker;
+                    app.calcRoute();
                     return;
                 } else if (data.type == 'gps_cancel_alert') {
                     // remove alert from the map.
                     app.$store.state.alert.allAlerts[data.id].setMap(null);
-                    app.$store.state.alert.allAlerts[data.id] = null;
+                    delete app.$store.state.alert.allAlerts[data.id];
                     return;
                 } else if (data.type == 'logout') {
                     // delete user and its marker upon logout.
@@ -333,6 +346,19 @@ export default {
                     timeout: 5000,
                     maximumAge: Infinity
                 });
+        },
+        calcRoute: function() {
+            var start = 'Flen';
+            var end = 'Katrineholm';
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING'
+            };
+            this.directionsService.route(request, (result, status) => {
+                if (status == 'OK')
+                    this.directionsDisplay.setDirections(result);
+            });
         }
     }
 };
