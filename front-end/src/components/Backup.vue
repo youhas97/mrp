@@ -1,6 +1,7 @@
 <template>
     <div class="navBar">
-        <button id="backupButton" @mousedown="hold" @mouseup="release" @mouseout="release">
+        <button id="backupButton" @mousedown="hold" @mouseup="release" @mouseout="release"
+        @touchstart="hold" @touchend="release">
         {{buttonText}}
         </button>
 
