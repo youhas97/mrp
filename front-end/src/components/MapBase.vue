@@ -1,5 +1,7 @@
 <template>
-    <div class="Map" />
+    <div class="Map">
+
+    </div>
 </template>
 
 <script>
@@ -94,33 +96,40 @@ export default {
         /* Create click listener for alert creation */
         google.maps.event.addListener(map, 'click', function(event) {
             if (app.$store.state.alert.alerting) {
-                var marker = new google.maps.Marker({
-                    id: app.$store.state.alert.alertID,
-                    position: event.latLng,
-                    map: map,
-                    draggable: true
-                });
-                marker.setIcon({
-                    url: "https://img.icons8.com/flat_round/64/000000/error.png",
-                    scaledSize: new google.maps.Size(30, 30)
-                });
-                marker.setAnimation(google.maps.Animation.BOUNCE);
-                map.panTo(event.latLng);
-                app.$store.state.alert.alerting = false;
-                app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
-                app.sendAlert(marker.id);
+                let modal = document.getElementById('modal-window');
+                modal.style.display = "block";
 
-                /* Listen for clicks on marker */
-                google.maps.event.addListener(marker, 'click', function(event) {
-                    app.$store.state.websocket.send(JSON.stringify({
-                        'type': 'gps_cancel_alert',
-                        'id': marker.id
-                    }));
-                    app.$store.state.alert.allAlerts[marker.id] = null;
-                    marker.setMap(null);
-                });
+                let sendAlertBtn = document.getElementById('send-alert-btn');
+                sendAlertBtn.onclick = () => {
+                    var marker = new google.maps.Marker({
+                        id: app.$store.state.alert.alertID,
+                        position: event.latLng,
+                        map: map,
+                        draggable: true
+                    });
+                    marker.setIcon({
+                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                        scaledSize: new google.maps.Size(30, 30)
+                    });
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    map.panTo(event.latLng);
+                    app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
+                    app.sendAlert(marker.id);
 
-                app.$store.state.alert.alertID += 1;
+                    /* Listen for clicks on marker */
+                    google.maps.event.addListener(marker, 'click', function(event) {
+                        app.$store.state.websocket.send(JSON.stringify({
+                            'type': 'gps_cancel_alert',
+                            'id': marker.id
+                        }));
+                        app.$store.state.alert.allAlerts[marker.id] = null;
+                        marker.setMap(null);
+                    });
+
+                    app.$store.state.alert.alertID += 1;
+                    app.$store.state.alert.alerting = false;
+                    modal.style.display = "none";
+                }
 
             }
         });
