@@ -62,7 +62,9 @@ export default {
     async mounted() {
         google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
-        const map = new google.maps.Map(this.$el);
+        const map = new google.maps.Map(this.$el, {
+            disableDefaultUI: true
+        });
         app = this;
 
         if (app.$store.state.users.meObj !== null) {

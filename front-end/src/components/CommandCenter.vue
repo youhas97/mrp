@@ -42,9 +42,15 @@ export default {
 
 <style scoped>
 .Map {
-    width: 99vw;
-    height: 90vh;
-    margin: auto;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: -1;
+    /*margin: auto;*/
+}
+.Alert {
+    position: absolute;
+    z-index: 1;
 }
 
 /* The Modal (background) */
