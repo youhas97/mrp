@@ -137,7 +137,7 @@ export default {
 
 <style scoped>
 
-#backupButton {
+button {
     margin: 10px;
     font-size: 200%;
     border-radius: 10px;
