@@ -214,8 +214,8 @@ label {
 
 button {
     margin: 10px;
-    font-size: 200%;
-    border-radius: 10px;
+    font-size: 100%;
+    border-radius: 30px 10px;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 5px;
