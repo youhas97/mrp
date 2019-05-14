@@ -96,6 +96,7 @@ export default {
         /* Create click listener for alert creation */
         google.maps.event.addListener(map, 'click', function(event) {
             if (app.$store.state.alert.alerting) {
+                // modal window that appears in CommandCenter.vue
                 let modal = document.getElementById('modal-window');
                 modal.style.display = "block";
 
@@ -105,7 +106,7 @@ export default {
                         id: app.$store.state.alert.alertID,
                         position: event.latLng,
                         map: map,
-                        draggable: true
+                        draggable: false
                     });
                     marker.setIcon({
                         url: "https://img.icons8.com/flat_round/64/000000/error.png",
@@ -114,16 +115,30 @@ export default {
                     marker.setAnimation(google.maps.Animation.BOUNCE);
                     map.panTo(event.latLng);
                     app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
+
+                    let textArea = document.getElementById('modal-textarea');
+                    let input = document.getElementById('modal-input');
+
+                    let windowContent = '<div id="content">'+
+                        `<h3>${input.value}</h3>`+
+                        `<p>Beskrivning: ${textArea.value}</p>`+
+                        '</div>';
+
+                    let infowindow = new google.maps.InfoWindow({
+                        content: windowContent
+                    });
+
                     app.sendAlert(marker.id);
 
                     /* Listen for clicks on marker */
                     google.maps.event.addListener(marker, 'click', function(event) {
-                        app.$store.state.websocket.send(JSON.stringify({
+                        infowindow.open(map, marker);
+                        /*app.$store.state.websocket.send(JSON.stringify({
                             'type': 'gps_cancel_alert',
                             'id': marker.id
                         }));
                         app.$store.state.alert.allAlerts[marker.id] = null;
-                        marker.setMap(null);
+                        marker.setMap(null);*/
                     });
 
                     app.$store.state.alert.alertID += 1;
@@ -185,7 +200,6 @@ export default {
                 handleLocationError(false, map.getCenter(), map);
             }
         });
-
     },
     methods: {
         recieveMessage: function(map) {

@@ -3,11 +3,12 @@
         <Alert/>
         <Map/>
 
+        <!-- Modal window that appears when ledning wants to send an alert. -->
         <div id="modal-window" class="modal">
             <div class="modal-content">
                 <h1>Larm</h1>
-                <p>Rubrik: </p><input type="text">
-                <p>Beskrivning: </p><textarea rows="4" cols="50"></textarea>
+                <p>Rubrik: </p><input type="text" id="modal-input">
+                <p>Beskrivning: </p><textarea id="modal-textarea" rows="4" cols="50"></textarea>
                 <p>Ladda upp bild: </p>
                 <button id="send-alert-btn">Skicka larm</button>
             </div>
