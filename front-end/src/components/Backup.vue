@@ -97,12 +97,12 @@ export default {
                     var dropdown = document.getElementById('dropdown');
                     var userButton = document.createElement('button');
                     // styling.
-                    userButton.style.padding = "12px 16px";
+                    userButton.style.padding = "5px 0px";
                     userButton.style.width = "100%";
-                    userButton.style.color = "#000000"
+                    userButton.style.borderRadius = "10px";
+                    userButton.style.fontSize = "150%";
                     userButton.style.display = "block";
-                    userButton.style.border = "none";
-                    userButton.style['background-color'] = "#e7e7e7";
+                    userButton.style.border = "2px solid #4a86e8";
                     userButton.innerHTML = user;
                     // add click listener that locates user that is clicked.
                     userButton.addEventListener('click', (event) => {
@@ -136,16 +136,43 @@ export default {
 </script>
 
 <style scoped>
+#dropdown button {
+    display: block;
+    padding: "12px 16px";
+    width: 100%;
+    color: black;
+    background-color: #e7e7e7;
+    border: none;
+}
+
+#dropdown button:hover {
+    background-color: blue;
+    color: white;
+}
+
+#dropdown {
+    width: 100%;
+}
 
 button {
-    margin: 10px;
-    font-size: 200%;
+    font-size: 150%;
     border-radius: 10px;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 5px;
     padding-bottom: 5px;
     border: 2px solid #4a86e8;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#backupButton {
+    margin: 10px;
 }
 
 #userSelection {
@@ -165,19 +192,5 @@ button {
 
 .show {
     display: block;
-}
-
-.dropdown-content button {
-    display: block;
-    padding: "12px 16px";
-    width: 100%;
-    color: black;
-    background-color: "#e7e7e7";
-    border: none;
-}
-
-.dropdown-content button:hover {
-    background-color: blue;
-    color: white;
 }
 </style>
