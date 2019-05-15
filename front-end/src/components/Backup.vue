@@ -6,7 +6,7 @@
         </button>
 
         <div id="userSelection" class="dropdownList">
-            <button class="dropdownBtn" type="submit" @mousedown="searchUser">Find user</button>
+            <button class="dropdownBtn" type="submit" @mousedown="searchUser">Aktiva poliser</button>
             <div id="dropdown" class="dropdown-content">
             </div>
         </div>

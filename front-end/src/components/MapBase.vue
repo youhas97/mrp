@@ -99,8 +99,7 @@ export default {
                 var marker = new google.maps.Marker({
                     id: app.$store.state.alert.alertID,
                     position: event.latLng,
-                    map: map,
-                    draggable: true
+                    map: map
                 });
                 marker.setIcon({
                     url: "https://img.icons8.com/flat_round/64/000000/error.png",
@@ -193,8 +192,7 @@ export default {
                     let marker = new google.maps.Marker({
                         id: data.id,
                         position: data.pos,
-                        map: map,
-                        draggable: false
+                        map: map
                     });
                     marker.setIcon({
                         url: "https://img.icons8.com/flat_round/64/000000/error.png",
