@@ -124,6 +124,7 @@ export default {
                     let windowContent = '<div id="content">'+
                         `<h3>${input.value}</h3>`+
                         `<p>Beskrivning: ${textArea.value}</p>`+
+                        `<button id="${marker.id}" onclick="document.getElementById('app').__vue__.$root.$emit('removeAlert', ${marker.id})">Ta bort larm</button>`+
                         '</div>';
 
                     let infowindow = new google.maps.InfoWindow({
@@ -135,12 +136,6 @@ export default {
                     /* Listen for clicks on marker */
                     google.maps.event.addListener(marker, 'click', function(event) {
                         infowindow.open(map, marker);
-                        /*app.$store.state.websocket.send(JSON.stringify({
-                            'type': 'gps_cancel_alert',
-                            'id': marker.id
-                        }));
-                        app.$store.state.alert.allAlerts[marker.id] = null;
-                        marker.setMap(null);*/
                     });
 
                     app.$store.state.alert.alertID += 1;
@@ -149,6 +144,10 @@ export default {
                 }
 
             }
+        });
+
+        this.$root.$on('removeAlert', (id) => {
+            this.removeAlert(id);
         });
 
         this.recieveMessage(map);
@@ -216,8 +215,7 @@ export default {
                     let marker = new google.maps.Marker({
                         id: data.id,
                         position: data.pos,
-                        map: map,
-                        draggable: false
+                        map: map
                     });
                     marker.setIcon({
                         url: "https://img.icons8.com/flat_round/64/000000/error.png",
@@ -358,6 +356,15 @@ export default {
                     timeout: 5000,
                     maximumAge: Infinity
                 });
+        },
+        removeAlert: function(id) {
+            let marker = this.$store.state.alert.allAlerts[id];
+            this.$store.state.websocket.send(JSON.stringify({
+                'type': 'gps_cancel_alert',
+                'id': marker.id
+            }));
+            this.$store.state.alert.allAlerts[marker.id] = null;
+            marker.setMap(null);
         }
     }
 };

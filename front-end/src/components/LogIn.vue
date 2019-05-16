@@ -88,6 +88,7 @@ export default {
                 if (data.type == 'success') {
                     if (data.group == "ledning") {
                         app.$store.state.users.meObj = null;
+                        app.$store.state.users.username = "ledning";
                         app.$router.replace('cc');
                     } else {
                         app.$store.state.users.meObj = {
@@ -121,7 +122,7 @@ export default {
                     window, but then return to the old one. The workaround is to replace
                     the history and then redirect to the login page using window.location
                     in order to flush the entirety of the page. This will give similar
-                    behavior to vue.router.replace(). */
+                    behavior to vue.router.replace() but is not a proper solution. */
                     window.history.replaceState(null, "", 
                         `https://${window.location.hostname}:${window.location.port}`);
                     window.location.href = 

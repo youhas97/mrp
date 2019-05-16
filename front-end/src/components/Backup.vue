@@ -5,10 +5,11 @@
         {{buttonText}}
         </button>
 
-        <form id="searchForm" @submit.prevent="searchUser">
-            <input v-model="searchText" type="text" placeholder="Search user...">
-            <button type="submit" @release="searchUser">Search</button>
-        </form>
+        <div id="userSelection" class="dropdownList">
+            <button class="dropdownBtn" type="submit" @mousedown="searchUser">Aktiva poliser</button>
+            <div id="dropdown" class="dropdown-content">
+            </div>
+        </div>
     </div>
 </template>
 
