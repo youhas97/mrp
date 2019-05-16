@@ -165,6 +165,13 @@ export default {
             this.removeAlert(id);
         });
 
+        /* Listener for $emit('calcRoute'), which is called on the USERS
+        alert infowindow button onclick "vägbeskrivning", which is added
+        in receiveMessage() */
+        this.$root.$on('calcRoute', (markerID) => {
+            this.calcRoute(markerID);
+        });
+
         this.recieveMessage(map);
         geocoder.geocode({ address: 'Linköping' }, (results, status) => {
             if (status !== 'OK' || !results[0]) {
@@ -239,16 +246,16 @@ export default {
                     marker.setAnimation(google.maps.Animation.BOUNCE);
                     map.panTo(data.pos);
                     app.$store.state.alert.allAlerts[data.id] = marker;
-                    app.calcRoute(
-                        app.$store.state.users.allMarkers[
-                            app.$store.state.users.username
-                        ].position,
-                        marker.position
-                    );
                     /* Create an infowindow for the alert icon */
                     let windowContent = '<div id="content">'+
                         `<h3>${data['infowindow-header']}</h3>`+
                         `<p>Beskrivning: ${data['infowindow-content']}</p>`+
+                        `<button onclick=`+
+                        `"document.getElementById('app').__vue__.$root.$emit(`+
+                        `'calcRoute', ${marker.id}`+
+                        `)">`+
+                        `Vägbeskrivning`+
+                        `</button>`+
                         '</div>';
 
                     let infowindow = new google.maps.InfoWindow({
@@ -393,7 +400,11 @@ export default {
                     maximumAge: Infinity
                 });
         },
-        calcRoute: function(start, end) {
+        calcRoute: function(markerID) {
+            let start = this.$store.state.users.allMarkers[
+                this.$store.state.users.username
+            ].position;
+            let end = this.$store.state.alert.allAlerts[markerID].position;
             var request = {
                 origin: start,
                 destination: end,
