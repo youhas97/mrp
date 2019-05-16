@@ -121,17 +121,19 @@ export default {
                     let textArea = document.getElementById('modal-textarea');
                     let input = document.getElementById('modal-input');
 
+                    /* Create an infowindow for the alert icon */
                     let windowContent = '<div id="content">'+
                         `<h3>${input.value}</h3>`+
                         `<p>Beskrivning: ${textArea.value}</p>`+
-                        `<button id="${marker.id}" onclick="document.getElementById('app').__vue__.$root.$emit('removeAlert', ${marker.id})">Ta bort larm</button>`+
+                        `<button onclick="document.getElementById('app').__vue__.$root.$emit('removeAlert', ${marker.id})">Ta bort larm</button>`+
                         '</div>';
 
                     let infowindow = new google.maps.InfoWindow({
                         content: windowContent
                     });
 
-                    app.sendAlert(marker.id);
+                    // send alert to other users.
+                    app.sendAlert(marker.id, input.value, textArea.value);
 
                     /* Listen for clicks on marker */
                     google.maps.event.addListener(marker, 'click', function(event) {
@@ -146,6 +148,9 @@ export default {
             }
         });
 
+        /* Listener for $emit('removeAlert'), which is called on 
+        alert infowindow button onclick. The infowindow is defined 
+        in the listener method above.*/
         this.$root.$on('removeAlert', (id) => {
             this.removeAlert(id);
         });
@@ -224,6 +229,19 @@ export default {
                     marker.setAnimation(google.maps.Animation.BOUNCE);
                     map.panTo(data.pos);
                     app.$store.state.alert.allAlerts[data.id] = marker;
+                    /* Create an infowindow for the alert icon */
+                    let windowContent = '<div id="content">'+
+                        `<h3>${data['infowindow-header']}</h3>`+
+                        `<p>Beskrivning: ${data['infowindow-content']}</p>`+
+                        '</div>';
+
+                    let infowindow = new google.maps.InfoWindow({
+                        content: windowContent
+                    });
+                    /* Listen for clicks on marker */
+                    google.maps.event.addListener(marker, 'click', function(event) {
+                        infowindow.open(map, marker);
+                    });
                     return;
                 } else if (data.type == 'gps_cancel_alert') {
                     // remove alert from the map.
@@ -326,11 +344,13 @@ export default {
             }))
 
         },
-        sendAlert: function(alertID) {
+        sendAlert: function(alertID, header, content) {
             app.$store.state.websocket.send(JSON.stringify({
                 'type': 'gps_alert',
                 'id': alertID,
-                'pos': app.$store.state.alert.allAlerts[alertID].position
+                'pos': app.$store.state.alert.allAlerts[alertID].position,
+                'infowindow-header': header,
+                'infowindow-content': content
             }));
         },
         sendAlertTo: function(username, alertID) {
