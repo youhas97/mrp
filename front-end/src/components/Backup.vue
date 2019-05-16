@@ -7,7 +7,14 @@
 
         <div id="userSelection" class="dropdownList">
             <button class="dropdownBtn" type="submit" @mousedown="searchUser">Aktiva poliser</button>
-            <div id="dropdown" class="dropdown-content">
+            <div id="dropdown" class="dropdownContent">
+            </div>
+        </div>
+
+        <div id="choiceList" class="dropdownList">
+            <button id="gearBtn"  @mousedown="openMenu"/>
+            <div id="menus" class="dropdownContent">
+                <button id="cancelDirectionsBtn">Avsluta vägbeskrivning</button>
             </div>
         </div>
     </div>
@@ -109,6 +116,9 @@ export default {
                 while(dropdownList.firstChild)
                     dropdownList.removeChild(dropdownList.firstChild);
             }
+        },
+        openMenu: function() {
+            document.getElementById('menus').classList.toggle('show');
         }
         /*
                 countSecs: function(){
@@ -168,7 +178,7 @@ button {
     display: inline-block;
 }
 
-.dropdown-content {
+.dropdownContent {
     display: none;
     position: absolute;
     background-color: #f1f1f1;
@@ -178,7 +188,35 @@ button {
     z-index: 1;
 }
 
+#menus {
+    right: 0;
+    left: auto;
+}
+
+#menus button {
+    font-size: 100%;
+}
+
 .show {
     display: block;
+}
+
+#gearBtn {
+    background-image: url('../assets/gearIcon.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    width: 1.5em;
+    height: 1.5em;
+    z-index: 1;
+    border: none;
+}
+
+#choiceList {  
+    position: absolute;
+    display: inline-block;
+    top: 15px;
+    right: 15px;
 }
 </style>
