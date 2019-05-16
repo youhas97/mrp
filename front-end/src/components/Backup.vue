@@ -1,13 +1,15 @@
 <template>
     <div class="navBar">
-        <button id="backupButton" @mousedown="hold" @mouseup="release" @mouseout="release">
+        <button id="backupButton" @mousedown="hold" @mouseup="release" @mouseout="release"
+        @touchstart="hold" @touchend="release">
         {{buttonText}}
         </button>
 
-        <form id="searchForm" @submit.prevent="searchUser">
-            <input v-model="searchText" type="text" placeholder="Search user...">
-            <button type="submit" @release="searchUser">Search</button>
-        </form>
+        <div id="userSelection" class="dropdownList">
+            <button class="dropdownBtn" type="submit" @mousedown="searchUser">Aktiva poliser</button>
+            <div id="dropdown" class="dropdown-content">
+            </div>
+        </div>
     </div>
 </template>
 
@@ -72,12 +74,40 @@ export default {
             }
         },
         searchUser: function() {
-            var user = this.$store.state.users.allUsers[this.searchText];
-            if(!user)
-                alert("User does not exist.");
-            else {
-                alert("User found!");
-                this.$root.$emit('locateUser', this.searchText);
+            /* This function is executed by the dropdown button */
+            document.getElementById('dropdown').classList.toggle('show');
+
+            /* If the dropdown list already contains elements, 
+                don't add duplicates. */
+            if(!document.getElementById('dropdown').firstChild) {
+                // Add all users to the dropdown div. 
+                for(var user in this.$store.state.users.allUsers){
+                    var dropdown = document.getElementById('dropdown');
+                    var userButton = document.createElement('button');
+                    // styling.
+                    userButton.style.padding = "5px 0px";
+                    userButton.style.width = "100%";
+                    userButton.style.borderRadius = "10px";
+                    userButton.style.fontSize = "150%";
+                    userButton.style.display = "block";
+                    userButton.style.border = "2px solid #4a86e8";
+                    userButton.innerHTML = user;
+                    // add click listener that locates user that is clicked.
+                    userButton.addEventListener('click', (event) => {
+                        let username = event.srcElement.innerHTML;
+                        this.$root.$emit('locateUser', username);
+                    });
+                    dropdown.appendChild(userButton);
+                }
+            } else if(
+                !document.getElementById('dropdown').classList.contains('show') &&
+                document.getElementById('dropdown').firstChild
+            ) {
+                /* If dropdownList is hidden with toggle, 
+                delete all children element */
+                var dropdownList = document.getElementById('dropdown');
+                while(dropdownList.firstChild)
+                    dropdownList.removeChild(dropdownList.firstChild);
             }
         }
         /*
@@ -94,15 +124,61 @@ export default {
 </script>
 
 <style scoped>
+#dropdown button {
+    display: block;
+    padding: "12px 16px";
+    width: 100%;
+    color: black;
+    background-color: #e7e7e7;
+    border: none;
+}
 
-#backupButton {
-    margin: 10px;
-    font-size: 200%;
+#dropdown button:hover {
+    background-color: blue;
+    color: white;
+}
+
+#dropdown {
+    width: 100%;
+}
+
+button {
+    font-size: 150%;
     border-radius: 10px;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 5px;
     padding-bottom: 5px;
     border: 2px solid #4a86e8;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#backupButton {
+    margin: 10px;
+}
+
+#userSelection {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 100px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.show {
+    display: block;
 }
 </style>

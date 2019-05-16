@@ -1,5 +1,7 @@
 <template>
-    <div class="Map" />
+    <div class="Map">
+
+    </div>
 </template>
 
 <script>
@@ -66,7 +68,9 @@ export default {
     async mounted() {
         google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
-        const map = new google.maps.Map(this.$el);
+        const map = new google.maps.Map(this.$el, {
+            disableDefaultUI: true
+        });
         app = this;
 
         app.directionsService = new google.maps.DirectionsService();
@@ -104,35 +108,61 @@ export default {
         /* Create click listener for alert creation */
         google.maps.event.addListener(map, 'click', function(event) {
             if (app.$store.state.alert.alerting) {
-                var marker = new google.maps.Marker({
-                    id: app.$store.state.alert.alertID,
-                    position: event.latLng,
-                    map: map,
-                    draggable: true
-                });
-                marker.setIcon({
-                    url: "https://img.icons8.com/flat_round/64/000000/error.png",
-                    scaledSize: new google.maps.Size(30, 30)
-                });
-                marker.setAnimation(google.maps.Animation.BOUNCE);
-                map.panTo(event.latLng);
-                app.$store.state.alert.alerting = false;
-                app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
-                app.sendAlert(marker.id);
+                // modal window that appears in CommandCenter.vue
+                let modal = document.getElementById('modal-window');
+                modal.style.display = "block";
 
-                /* Listen for clicks on marker */
-                google.maps.event.addListener(marker, 'click', function(event) {
-                    app.$store.state.websocket.send(JSON.stringify({
-                        'type': 'gps_cancel_alert',
-                        'id': marker.id
-                    }));
-                    app.$store.state.alert.allAlerts[marker.id] = null;
-                    marker.setMap(null);
-                });
+                let sendAlertBtn = document.getElementById('send-alert-btn');
+                sendAlertBtn.onclick = () => {
+                    var marker = new google.maps.Marker({
+                        id: app.$store.state.alert.alertID,
+                        position: event.latLng,
+                        map: map,
+                        draggable: false
+                    });
+                    marker.setIcon({
+                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                        scaledSize: new google.maps.Size(30, 30)
+                    });
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    map.panTo(event.latLng);
+                    app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
 
-                app.$store.state.alert.alertID += 1;
+                    let textArea = document.getElementById('modal-textarea');
+                    let input = document.getElementById('modal-input');
+
+                    /* Create an infowindow for the alert icon */
+                    let windowContent = '<div id="content">'+
+                        `<h3>${input.value}</h3>`+
+                        `<p>Beskrivning: ${textArea.value}</p>`+
+                        `<button onclick="document.getElementById('app').__vue__.$root.$emit('removeAlert', ${marker.id})">Ta bort larm</button>`+
+                        '</div>';
+
+                    let infowindow = new google.maps.InfoWindow({
+                        content: windowContent
+                    });
+
+                    // send alert to other users.
+                    app.sendAlert(marker.id, input.value, textArea.value);
+
+                    /* Listen for clicks on marker */
+                    google.maps.event.addListener(marker, 'click', function(event) {
+                        infowindow.open(map, marker);
+                    });
+
+                    app.$store.state.alert.alertID += 1;
+                    app.$store.state.alert.alerting = false;
+                    modal.style.display = "none";
+                }
 
             }
+        });
+
+        /* Listener for $emit('removeAlert'), which is called on 
+        alert infowindow button onclick. The infowindow is defined 
+        in the listener method above.*/
+        this.$root.$on('removeAlert', (id) => {
+            this.removeAlert(id);
         });
 
         this.recieveMessage(map);
@@ -186,7 +216,6 @@ export default {
                 handleLocationError(false, map.getCenter(), map);
             }
         });
-
     },
     methods: {
         recieveMessage: function(map) {
@@ -201,8 +230,7 @@ export default {
                     let marker = new google.maps.Marker({
                         id: data.id,
                         position: data.pos,
-                        map: map,
-                        draggable: false
+                        map: map
                     });
                     marker.setIcon({
                         url: "https://img.icons8.com/flat_round/64/000000/error.png",
@@ -217,6 +245,19 @@ export default {
                         ].position,
                         marker.position
                     );
+                    /* Create an infowindow for the alert icon */
+                    let windowContent = '<div id="content">'+
+                        `<h3>${data['infowindow-header']}</h3>`+
+                        `<p>Beskrivning: ${data['infowindow-content']}</p>`+
+                        '</div>';
+
+                    let infowindow = new google.maps.InfoWindow({
+                        content: windowContent
+                    });
+                    /* Listen for clicks on marker */
+                    google.maps.event.addListener(marker, 'click', function(event) {
+                        infowindow.open(map, marker);
+                    });
                     return;
                 } else if (data.type == 'gps_cancel_alert') {
                     // remove alert from the map.
@@ -319,11 +360,13 @@ export default {
             }))
 
         },
-        sendAlert: function(alertID) {
+        sendAlert: function(alertID, header, content) {
             app.$store.state.websocket.send(JSON.stringify({
                 'type': 'gps_alert',
                 'id': alertID,
-                'pos': app.$store.state.alert.allAlerts[alertID].position
+                'pos': app.$store.state.alert.allAlerts[alertID].position,
+                'infowindow-header': header,
+                'infowindow-content': content
             }));
         },
         sendAlertTo: function(username, alertID) {
@@ -360,6 +403,15 @@ export default {
                 if (status == 'OK')
                     this.directionsDisplay.setDirections(result);
             });
+        },
+        removeAlert: function(id) {
+            let marker = this.$store.state.alert.allAlerts[id];
+            this.$store.state.websocket.send(JSON.stringify({
+                'type': 'gps_cancel_alert',
+                'id': marker.id
+            }));
+            this.$store.state.alert.allAlerts[marker.id] = null;
+            marker.setMap(null);
         }
     }
 };

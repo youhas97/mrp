@@ -73,12 +73,19 @@ export default {
 <style scoped>
 button {
     margin: 10px;
-    font-size: 200%;
+    font-size: 150%;
     border-radius: 10px;
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 5px;
     padding-bottom: 5px;
     border: 2px solid #4a86e8;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 </style>
