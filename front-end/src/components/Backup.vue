@@ -12,9 +12,9 @@
         </div>
 
         <div id="choiceList" class="dropdownList">
-            <button id="gearBtn"  @mousedown="openMenu"/>
+            <button id="gearBtn"  @mousedown="toggleMenu"/>
             <div id="menus" class="dropdownContent">
-                <button id="cancelDirectionsBtn">Avsluta vägbeskrivning</button>
+                <button id="cancelDirectionsBtn" @mousedown="cancelDirections">Avsluta vägbeskrivning</button>
             </div>
         </div>
     </div>
@@ -103,6 +103,7 @@ export default {
                     userButton.addEventListener('click', (event) => {
                         let username = event.srcElement.innerHTML;
                         this.$root.$emit('locateUser', username);
+                        document.getElementById('dropdown').classList.toggle('show');
                     });
                     dropdown.appendChild(userButton);
                 }
@@ -117,9 +118,15 @@ export default {
                     dropdownList.removeChild(dropdownList.firstChild);
             }
         },
-        openMenu: function() {
+        toggleMenu: function() {
             document.getElementById('menus').classList.toggle('show');
+        },
+        cancelDirections: function() {
+            /* Tell MapBase to remove directions. */
+            this.$root.$emit('cancelDirections');
+            this.toggleMenu();
         }
+        
         /*
                 countSecs: function(){
                     for(var i; i < 3; i++){

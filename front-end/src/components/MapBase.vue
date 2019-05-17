@@ -74,15 +74,19 @@ export default {
         app = this;
 
         app.directionsService = new google.maps.DirectionsService();
-        app.directionsDisplay = new google.maps.DirectionsRenderer();
+        app.directionsDisplay = new google.maps.DirectionsRenderer({
+            suppressMarkers: true
+        });
         app.directionsDisplay.setMap(map);
 
+        // If user is not ledning then broadcast meObj.
         if (app.$store.state.users.meObj !== null) {
             app.sendPerson();
         }
 
         /* This function will be called when search function 
-        has been triggered with vue.$root.$emit('locateUser').*/
+        has been triggered with vue.$root.$emit('locateUser') in
+        Backup component.*/
         this.$root.$on('locateUser', (username) => {
             let pos = app.$store.state.users.allMarkers[username].position;
             map.panTo(pos);
@@ -95,7 +99,7 @@ export default {
         });
 
         /* This function will be called when a user calls for backup
-        and the marker icon has to be changed. */
+        and the marker icon has to be changed, in Backup component. */
         this.$root.$on('changeMarker', () => {
             this.changeMarker(
                 this.$store.state.users.allMarkers[
@@ -167,9 +171,16 @@ export default {
 
         /* Listener for $emit('calcRoute'), which is called on the USERS
         alert infowindow button onclick "vägbeskrivning", which is added
-        in receiveMessage() */
+        in receiveMessage(). */
         this.$root.$on('calcRoute', (markerID) => {
             this.calcRoute(markerID);
+            this.directionsDisplay.setMap(map);
+        });
+
+        /* Listener for $emit('cancelDirections') in Backup component. 
+        Removes directions from map. */
+        this.$root.$on('cancelDirections', () => {
+            this.directionsDisplay.setMap(null);
         });
 
         this.recieveMessage(map);
