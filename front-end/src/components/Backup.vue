@@ -144,6 +144,7 @@ export default {
 #dropdown button {
     display: block;
     padding: "12px 16px";
+    margin: 0;
     width: 100%;
     color: black;
     background-color: #e7e7e7;
@@ -177,12 +178,22 @@ button {
 }
 
 #backupButton {
-    margin: 10px;
+    position: absolute;
+    bottom: 10px;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
 }
 
 #userSelection {
     position: relative;
+    margin: 0 auto;
+    padding: 0;
     display: inline-block;
+}
+
+.dropdownBtn {
+    margin: 0;
 }
 
 .dropdownContent {
