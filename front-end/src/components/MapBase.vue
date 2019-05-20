@@ -133,11 +133,11 @@ export default {
                     app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
 
                     let textArea = document.getElementById('modal-textarea');
-                    let input = document.getElementById('modal-input');
+                    let title = document.getElementById('modal-title');
 
                     /* Create an infowindow for the alert icon */
                     let windowContent = '<div id="content">'+
-                        `<h3>${input.value}</h3>`+
+                        `<h3>${title.value}</h3>`+
                         `<p>Beskrivning: ${textArea.value}</p>`+
                         `<button onclick="document.getElementById('app').__vue__.$root.$emit('removeAlert', ${marker.id})">Ta bort larm</button>`+
                         '</div>';
@@ -147,7 +147,7 @@ export default {
                     });
 
                     // send alert to other users.
-                    app.sendAlert(marker.id, input.value, textArea.value);
+                    app.sendAlert(marker.id, title.value, textArea.value);
 
                     /* Listen for clicks on marker */
                     google.maps.event.addListener(marker, 'click', function(event) {
@@ -157,6 +157,9 @@ export default {
                     app.$store.state.alert.alertID += 1;
                     app.$store.state.alert.alerting = false;
                     modal.style.display = "none";
+
+                    textArea.value = "";
+                    title.value = "";
                 }
 
             }

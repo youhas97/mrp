@@ -7,7 +7,7 @@
         <div id="modal-window" class="modal">
             <div class="modal-content">
                 <h1>Larm</h1>
-                <p>Rubrik: </p><input type="text" id="modal-input">
+                <p>Rubrik: </p><input type="text" id="modal-title">
                 <p>Beskrivning: </p><textarea id="modal-textarea" rows="4" cols="50"></textarea>
                 <p>Ladda upp bild: </p>
                 <button id="send-alert-btn">Skicka larm</button>
