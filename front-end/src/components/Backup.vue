@@ -6,7 +6,7 @@
         </button>
 
         <div id="userSelection" class="dropdownList">
-            <button class="dropdownBtn" type="submit" @mousedown="searchUser">Aktiva poliser</button>
+            <button class="dropdownBtn" type="submit" @mousedown="toggleUsers">Aktiva poliser</button>
             <div id="dropdown" class="dropdownContent">
             </div>
         </div>
@@ -38,7 +38,18 @@ export default {
             searchText: ""
         }
     },
-
+    mounted() {
+        let dropdown = document.getElementById('dropdown');
+        let menus = document.getElementById('menus');
+        window.onclick = (event) => {
+            if(!event.target.closest('#choiceList'))
+                if(menus.classList.contains('show'))
+                    this.toggleMenu();
+            if(!event.target.closest('#userSelection'))
+                if(dropdown.classList.contains('show'))
+                    this.toggleUsers();
+        };
+    },
     methods: {
         hold: function() {
             var secs = 3;
@@ -80,7 +91,7 @@ export default {
                 this.buttonText = "Förstärkning";
             }
         },
-        searchUser: function() {
+        toggleUsers: function() {
             /* This function is executed by the dropdown button */
             document.getElementById('dropdown').classList.toggle('show');
 
@@ -103,7 +114,8 @@ export default {
                     userButton.addEventListener('click', (event) => {
                         let username = event.srcElement.innerHTML;
                         this.$root.$emit('locateUser', username);
-                        document.getElementById('dropdown').classList.toggle('show');
+                        //document.getElementById('dropdown').classList.toggle('show');
+                        this.toggleUsers();
                     });
                     dropdown.appendChild(userButton);
                 }
@@ -180,9 +192,7 @@ button {
 #backupButton {
     position: absolute;
     bottom: 10px;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
+    margin: auto auto;
 }
 
 #userSelection {
@@ -204,6 +214,7 @@ button {
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+    background-color: transparent;
 }
 
 #menus {

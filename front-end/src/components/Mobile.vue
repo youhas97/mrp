@@ -15,14 +15,30 @@ export default {
         Backup,
         Map
     },
+    mounted() {
+        Map.ontouchend = (e) => {
+            e.preventDefault();
+        };
+    }
 }
 </script>
 
 <style scoped>
+ html, body {
+    margin: 0; 
+    height: 100%; 
+    overflow: hidden
+}
+
+body {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
 .Map {
-    position: absolute;
-    top: 0px;
-    left: 0px;
+    position: absolute; /* prevent overscroll bounce*/
+    top: 0;
+    left: 0;
     z-index: -1;
     /*margin: auto;*/
 }
