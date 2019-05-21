@@ -1,5 +1,5 @@
 <template>
-    <div class="navBar">
+    <div style="width: 180px; height: 40px; margin: 0 auto;" class="navBar">
         <button id="backupButton" @mousedown="hold" @mouseup="release" @mouseout="release"
         @touchstart="hold" @touchend="release">
         {{buttonText}}
