@@ -1,5 +1,5 @@
 <template>
-    <div style="width:100%;">
+    <div class="navBar">
             <button @mouseup="alert">
                 {{buttonText}}
             </button>
