@@ -71,6 +71,13 @@ export default {
             disableDefaultUI: true
         });
 
+        var closeInfoWindows = (event) => {
+            for(var i = 0; i < app.$store.state.allInfoWindows.length; i++) {
+                app.$store.state.allInfoWindows[i].close();
+            }
+        }
+        google.maps.event.addListener(map, 'click', closeInfoWindows);
+
         app.directionsService = new google.maps.DirectionsService();
         app.directionsDisplay = new google.maps.DirectionsRenderer({
             suppressMarkers: true
@@ -160,6 +167,7 @@ export default {
                         infowindow.open(map, marker);
                     });
 
+                    app.$store.state.allInfoWindows.push(infowindow);
                     app.$store.state.alert.alertID += 1;
                     app.$store.state.alert.alerting = false;
                     modal.style.display = "none";
@@ -337,6 +345,7 @@ export default {
                             infowindow.open(map, marker);
                         });
 
+                        app.$store.state.allInfoWindows.push(infowindow);
                         app.$store.state.users.allMarkers[username] = marker;
                         app.$store.state.users.allUsers[username] = userData;
 

@@ -42,6 +42,7 @@ const moduleUsers = {
 export default new Vuex.Store({
     state: {
         websocket: null,
+        allInfoWindows: []
     },
     modules: {
         alert: moduleAlert,
