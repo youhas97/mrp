@@ -123,10 +123,14 @@ export default {
                         draggable: false
                     });
                     marker.setIcon({
-                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                        url: "https://img.icons8.com/flat_round/64/000000/box-important.png",
                         scaledSize: new google.maps.Size(ICONSIZE, ICONSIZE)
                     });
-                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    marker.setAnimation(google.maps.Animation.DROP);
+                    setTimeout(function(){
+                        marker.setAnimation(google.maps.Animation.BOUNCE)
+                    },350);
+
                     map.panTo(event.latLng);
                     app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
 
@@ -256,10 +260,13 @@ export default {
                         map: map
                     });
                     marker.setIcon({
-                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
+                        url: "https://img.icons8.com/flat_round/64/000000/box-important.png",
                         scaledSize: new google.maps.Size(ICONSIZE, ICONSIZE)
                     });
-                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    marker.setAnimation(google.maps.Animation.DROP);
+                    setTimeout(function(){
+                        marker.setAnimation(google.maps.Animation.BOUNCE)
+                    },350);
                     map.panTo(data.pos);
                     app.$store.state.alert.allAlerts[data.id] = marker;
                     /* Create an infowindow for the alert icon */
