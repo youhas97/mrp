@@ -284,8 +284,12 @@ export default {
                     return;
                 } else if (data.type == 'gps_cancel_alert') {
                     // remove alert from the map.
-                    app.$store.state.alert.allAlerts[data.id].setMap(null);
-                    app.directionsDisplay.setMap(null);
+                    let alert = app.$store.state.alert.allAlerts[data.id];
+                    let end = app.directionsDisplay.destination;
+                    console.log(`Destination: ${end}`);
+                    if (alert.id == app.$store.state.alert.destinationID)
+                        app.directionsDisplay.setMap(null);
+                    alert.setMap(null);
                     delete app.$store.state.alert.allAlerts[data.id];
                     return;
                 } else if (data.type == 'logout') {
@@ -430,6 +434,7 @@ export default {
             app.directionsService.route(request, (result, status) => {
                 if (status == 'OK')
                     app.directionsDisplay.setDirections(result);
+                    app.$store.state.alert.destinationID = markerID;
             });
         },
         removeAlert: function(id) {

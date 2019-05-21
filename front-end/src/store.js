@@ -11,9 +11,10 @@ In this case, we can use the same websocket in all of our components.
 
 const moduleAlert = {
     state: {
-        alerting: false,
-        allAlerts: {},
-        alertID: 0,
+        alerting: false,    // Check if alerting mode is on
+        allAlerts: {},      // Dictionary containing all alerts
+        alertID: 0,         // Increments every time a marker is created
+        destinationID: 0,   // ID of the alert with the current directions
     }
 }
 
