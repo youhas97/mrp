@@ -9,6 +9,12 @@ In this case, we can use the same websocket in all of our components.
 'websocket' is first assigned a WebSocket in LogIn.vue.
 */
 
+const moduleTimer = {
+    state: {
+        allStartTimes: {}
+    }
+}
+
 const moduleAlert = {
     state: {
         alerting: false,
@@ -44,7 +50,8 @@ export default new Vuex.Store({
     },
     modules: {
         alert: moduleAlert,
-        users: moduleUsers
+        users: moduleUsers,
+        timer: moduleTimer
     }
 
 })

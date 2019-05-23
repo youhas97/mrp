@@ -50,6 +50,18 @@ function geoLocate(map) {
     });
 }
 
+function distance(lat1,lon1,lat2,lon2) {
+	var R = 6371; // km (change this constant to get miles)
+	var dLat = (lat2-lat1) * Math.PI / 180;
+	var dLon = (lon2-lon1) * Math.PI / 180;
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+		Math.cos(lat1 * Math.PI / 180 ) * Math.cos(lat2 * Math.PI / 180 ) *
+		Math.sin(dLon/2) * Math.sin(dLon/2);
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	var d = R * c * 1000;
+	return d;
+}
+
 function geoGoal(map, goalWindow, results) {
     let pos = results[0].geometry.location;
     goalWindow.setPosition(pos);
@@ -134,7 +146,6 @@ export default {
 
                     let textArea = document.getElementById('modal-textarea');
                     let title = document.getElementById('modal-title');
-
                     /* Create an infowindow for the alert icon */
                     let windowContent = '<div id="content">'+
                         `<h3>${title.value}</h3>`+
@@ -149,6 +160,8 @@ export default {
                     // send alert to other users.
                     app.sendAlert(marker.id, title.value, textArea.value);
 
+                    // Start timer
+                    app.$store.state.timer.allStartTimes[marker.id] = new Date().getTime()
                     /* Listen for clicks on marker */
                     google.maps.event.addListener(marker, 'click', function(event) {
                         infowindow.open(map, marker);
@@ -218,16 +231,28 @@ export default {
                 app.$store.state.users.allMarkers[username] = marker;
 
                 window.setInterval(function() {
-                    navigator.geolocation.getCurrentPosition(function(position) {
+                    navigator.geolocation.getCurrentPosition(function(positionIn) {
                         //let position = geoLocate(map);
                         //console.log(position);
                         let pos = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
+                            lat: positionIn.coords.latitude,
+                            lng: positionIn.coords.longitude
                         };
                         marker.setPosition(pos);
                         app.$store.state.users.meObj.pos = pos;
                         app.sendPerson();
+                        for (let key in app.$store.state.alert.allAlerts){
+                            let alerts = app.$store.state.alert.allAlerts;
+                            if (alerts[key] != null){
+                                if (distance(pos.lat, pos.lng, alerts[key].position.lat(), alerts[key].position.lng()) < 100){
+                                    console.log("nära");
+                                    app.removeAlert(alerts[key].id);
+                                }
+                                else{
+                                    console.log("inte nära");
+                                }
+                            }
+                        }
                     })
                 }, 200);
 
@@ -282,6 +307,29 @@ export default {
                     return;
                 } else if (data.type == 'gps_cancel_alert') {
                     // remove alert from the map.
+                    if (app.$store.state.timer.allStartTimes[data.id] != null){
+                        let endTime = new Date().getTime();
+                        let s = endTime - app.$store.state.timer.allStartTimes[data.id];
+                        var ms = s % 1000;
+                        s = (s - ms) / 1000;
+                        var secs = s % 60;
+                        s = (s - secs) / 60;
+                        var mins = s % 60;
+                        var hrs = (s - mins) / 60;
+                        let timeDiff =  hrs + ':' + mins + ':' + secs + '.' + ms;
+
+                        let windowContent = '<div id="content">'+
+                            `<h3>Tiden det tog för att besvara larmet:</h3>`+
+                            `<p>${timeDiff}</p>`+
+                            '</div>';
+
+                        let infowindow = new google.maps.InfoWindow({
+                            content: windowContent,
+                            position: app.$store.state.alert.allAlerts[data.id].position
+                        });
+                        infowindow.open(map);
+                    }
+
                     app.$store.state.alert.allAlerts[data.id].setMap(null);
                     delete app.$store.state.alert.allAlerts[data.id];
                     return;
