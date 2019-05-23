@@ -138,16 +138,6 @@ export default {
             this.$root.$emit('cancelDirections');
             this.toggleMenu();
         }
-        
-        /*
-                countSecs: function(){
-                    for(var i; i < 3; i++){
-                        let that = this;
-                        setTimeout(function () {
-                            that.secs = i + 1;
-                        }, 1000*i + 10);
-                    }
-                }*/
     }
 }
 </script>

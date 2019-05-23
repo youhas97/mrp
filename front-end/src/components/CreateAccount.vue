@@ -38,13 +38,13 @@
             </section> 
 
             <section>
-            <label for="inputGroupnum" class="sr-only">
-            Gruppnummer
+            <label for="inputGroupname" class="sr-only">
+            Gruppnamn
             </label> 
             <br/>
 
-            <input v-model="groupnum" type="groupnum" id="inputGroupnum"
-            class="form-control" placeholder="Gruppnummer" required> 
+            <input v-model="groupname" type="groupname" id="inputGroupname"
+            class="form-control" placeholder="Grupp" required> 
             <br/>
             </section> 
 
@@ -74,8 +74,7 @@ export default {
         return {
             username: '',
             password:'',
-            groupnum:'',
-            name:''
+            groupname:'',
         }
     },
     methods: {
@@ -86,8 +85,7 @@ export default {
             /* eslint-disable no-console */
             console.log("username:", this.username);
             console.log("pw:", this.password);
-            console.log("groupnum:", this.groupnum);
-            console.log("name:", this.name);
+            console.log("groupnum:", this.groupname);
             /* eslint-enable no-console */
 
             let app = this;
@@ -125,8 +123,7 @@ export default {
             createUserRequest.send(JSON.stringify({
                 'username': app.username,
                 'password': app.password,
-                'groupnum': app.groupnum,
-                'name': app.groupnum
+                'groupname': app.groupname,
             }));
             console.log("Create user sent.");
             /* eslint-enable no-console */

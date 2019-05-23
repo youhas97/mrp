@@ -76,8 +76,7 @@ def register(request):
         data = json.loads(request.body)
         uname = data['username']
         pword = data['password']
-        group = data['groupnum']
-        name = data['name']
+        group = data['groupname']
 
         response = check_for_invalid_credentials(uname, pword, group)
         if response is not None:
