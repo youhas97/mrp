@@ -16,6 +16,6 @@ application = ProtocolTypeRouter({
                 connect.routing.websocket_urlpatterns
             )
         ),
-    ["https://10.0.0.6:5000/#/", ".herokuapp.com"] 
+    [".localhost", ".herokuapp.com"] 
     )
 })

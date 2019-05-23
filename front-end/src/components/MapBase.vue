@@ -15,7 +15,7 @@ let google;
 let positionTimer;
 let app;
 
-/* Constanst values*/
+/* Constant values*/
 const ZOOM = 13;
 const ICONSIZE = 30;
 const BUTTON_STYLING =  `font-size: 100%;`+

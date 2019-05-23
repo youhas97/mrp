@@ -4,47 +4,47 @@
         <form class="form-signin"
         @submit.prevent="createAccount">
             <h2 class="form-signin-heading">
-            Create an account
+            Skapa nytt konto
             </h2>
 
             <section>
-            <label for="inputUsername" class="sr-only"> Username 
+            <label for="inputUsername" class="sr-only"> Användarnamn 
             </label> 
             <br/>
 
-            <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Username" required autgofocus>
+            <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Användarnamn" required autgofocus>
             </section>
 
             <section>
             <label for="inputPassword" class="sr-only">
-            Password
+            Lösenord
             </label> 
             <br/>
 
             <input v-model="password" type="password" id="inputPassword"
-            class="form-control" placeholder="Password" required> 
+            class="form-control" placeholder="Lösenord" required> 
             <br/>
             </section> 
 
             <section>
             <label for="inputName" class="sr-only">
-            Name (What other users see)
+            Namn (synligt för andra användare)
             </label> 
             <br/>
 
             <input v-model="name" type="name" id="inputName"
-            class="form-control" placeholder="Name" required> 
+            class="form-control" placeholder="Namn" required> 
             <br/>
             </section> 
 
             <section>
             <label for="inputGroupnum" class="sr-only">
-            Group Number
+            Gruppnummer
             </label> 
             <br/>
 
             <input v-model="groupnum" type="groupnum" id="inputGroupnum"
-            class="form-control" placeholder="Group number" required> 
+            class="form-control" placeholder="Gruppnummer" required> 
             <br/>
             </section> 
 
@@ -55,11 +55,11 @@
 
             
             <button class="btn btn-lg btn-primary btn-block" type="button" @click="createUser">
-            Create
+            Skapa
             </button>
             
             <button class="btn btn-lg btn-primary btn-block" type="button" @click="routeLogin">
-            Back to login
+            Tillbaka till inloggningssidan
             </button>
 
         </form>

@@ -4,33 +4,33 @@
             <img alt="MRP Logo" src="../assets/logo.png">
             <form class="form-signin" @submit.prevent="login">
                 <h2 class="form-signin-heading">
-                    Please sign in
+                    Logga in
                 </h2>
     
                 <section>
-                    <label for="inputUsername" class="sr-only"> Username 
+                    <label for="inputUsername" class="sr-only"> Användarnamn 
                     </label>
                     <br/>
     
-                    <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Username" required autgofocus>
+                    <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Användarnamn" required autgofocus>
                 </section>
     
                 <section>
                     <label for="inputPassword" class="sr-only">
-                            Password
+                            Lösenord
                     </label>
                     <br/>
     
-                    <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                    <input v-model="password" type="password" id="inputPassword" class="form-control" placeholder="Lösenord" required>
                     <br/>
                 </section>
     
                 <button class="btn btn-lg btn-primary btn-block" type="submit" @release="login">
-                    Sign in
+                    Logga in
                 </button>
 
                 <button class="btn btn-lg btn-primary btn-block" type="button" @click="routeCreateAccount">
-                    Create account
+                    Skapa nytt konto
                 </button>
     
                 <!--
@@ -152,36 +152,6 @@ export default {
                 alert("Socket unable to connect to server. Code: " + event)
             }
 
-            // AUTHENTICATION WITH HTTP REQUEST ---------------------------------------------
-
-
-            /*var credentials = this.username + ":" + this.password;
-            /*
-            Converts bytes from a string to a base64-encoded string. Every character in the string therefore needs to be exactly one byte to encode correctly. 
-            */
-            /*var base64creds = btoa(credentials); 
-            var authHeader = " Basic " + base64creds;
-
-            let that = this;
-            var loginRequest = new XMLHttpRequest();
-            loginRequest.onreadystatechange = function() {
-                // TODO: Redirect to main page after success
-                if (this.readyState == 4 && this.status == 200) {
-                    that.$router.replace('map')
-                }
-                else if (this.readyState == 4 && this.status != 200){
-                    alert('Incorrect username or password, please try again!')
-                }
-
-                /* eslint-disable no-console */
-            //console.log("rdy-state: " + this.readyState)
-            //console.log("status: " + loginRequest.status);
-            //console.log(loginRequest.responseText);
-            /* eslint-enable no-console */
-            /*};
-            loginRequest.open("GET", "http://127.0.0.1:9000/connect/login/", true);
-            loginRequest.setRequestHeader("Authorization", authHeader);
-            loginRequest.send();*/
         },
         routeCreateAccount: function(){
             this.$router.replace('createaccount');
