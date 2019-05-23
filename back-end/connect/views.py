@@ -77,7 +77,9 @@ def register(request):
         uname = data['username']
         pword = data['password']
         group = data['groupname']
-        name = data['name']
+        name = data['name'].split(' ')
+        first_name = name[0]
+        last_name = name[1]
 
         response = check_for_invalid_credentials(uname, pword, group, name)
         if response is not None:
@@ -89,7 +91,7 @@ def register(request):
         """
         try:
             with transaction.atomic():
-                user = User.objects.create_user(username=uname, password=pword, first_name=name)
+                user = User.objects.create_user(username=uname, password=pword, first_name=first_name, last_name=last_name)
                 db_group = Group.objects.get(name=group)
                 db_group.user_set.add(user)
         except DatabaseError:

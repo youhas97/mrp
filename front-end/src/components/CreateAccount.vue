@@ -28,7 +28,7 @@
 
             <section>
             <label for="inputName" class="sr-only">
-            Förnamn 
+            Fullständigt Namn 
             </label> 
             <br/>
 
