@@ -259,11 +259,7 @@ export default {
                             let alerts = app.$store.state.alert.allAlerts;
                             if (alerts[key] != null){
                                 if (distance(pos.lat, pos.lng, alerts[key].position.lat(), alerts[key].position.lng()) < 100){
-                                    console.log("nära");
                                     app.removeAlert(alerts[key].id);
-                                }
-                                else{
-                                    console.log("inte nära");
                                 }
                             }
                         }
