@@ -78,10 +78,15 @@ def register(request):
         pword = data['password']
         group = data['groupname']
         name = data['name'].split(' ')
-        first_name = name[0]
-        last_name = name[1]
-
-        response = check_for_invalid_credentials(uname, pword, group, name)
+        
+        if len(name) > 1: 
+            first_name = name[0]
+            last_name = name[1]
+        else:
+            first_name = name[0]
+            last_name = ''
+    
+        response = check_for_invalid_credentials(uname, pword, group)
         if response is not None:
             return response
 
@@ -111,7 +116,7 @@ def register(request):
         response.status = 405
         return response
 
-def check_for_invalid_credentials(uname, pword, group, name):
+def check_for_invalid_credentials(uname, pword, group):
     """ Checks for invalid credentials.
 
     If invalid credentials are discovered, function will call invalid_credentials()
