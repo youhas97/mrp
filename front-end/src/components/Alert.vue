@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 500px; height: 40px; margin: 0 auto;">
+    <div style="width: 370px; height: 40px; margin: 0 auto;">
             <button @mouseup="alert">
                 {{buttonText}}
             </button>
