@@ -91,6 +91,38 @@ export default {
                 this.buttonText = "Förstärkning";
             }
         },
+        distanceTo: function(pos) {
+            /*  
+                This function uses the Haversine formula to calculate the 
+                shortest distance between two points.
+                
+                P1: users current position
+                P2: pos (input to function)
+            */
+            var meObj =  this.$store.state.users.meObj;
+
+            var rad = function(x) {
+                return x * Math.PI / 180;
+            };
+            
+
+            console.log(meObj.pos);
+
+            var R = 6378137; // Earth's mean radius in meter
+
+            var dLat = rad(pos.lat - meObj.pos.lat);
+            var dLng = rad(pos.lng - meObj.pos.lng);
+            
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+                Math.cos(rad(meObj.pos.lat)) * Math.cos(rad(pos.lat)) *
+                Math.sin(dLng/2) * Math.sin(dLng/2);
+
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            var d = R*c; // d = distance in meter
+            
+            return (d/1000).toFixed(2); // return distance in km
+        }
+        ,
         toggleUsers: function() {
             /* This function is executed by the dropdown button */
             document.getElementById('dropdown').classList.toggle('show');
@@ -98,18 +130,32 @@ export default {
             /* If the dropdown list already contains elements, 
                 don't add duplicates. */
             if(!document.getElementById('dropdown').firstChild) {
+                /* Make a list out of the dictionary of users */
+                var allUsers = this.$store.state.users.allUsers;
+                var userList = Object.keys(allUsers).map((key) => { 
+                    return [key, this.distanceTo(allUsers[key].pos)];
+                });
+                
+
+                /* Sort list of all users based on distance to self */
+                userList.sort((a,b) => {return a[1] - b[1]});
+
                 // Add all users to the dropdown div. 
-                for(var user in this.$store.state.users.allUsers){
+                for(var user in userList){
                     var dropdown = document.getElementById('dropdown');
                     var userButton = document.createElement('button');
                     // styling.
                     userButton.style.padding = "5px 0px";
                     userButton.style.width = "100%";
                     userButton.style.borderRadius = "10px";
-                    userButton.style.fontSize = "150%";
+                    userButton.style.fontSize = "120%";
                     userButton.style.display = "block";
                     userButton.style.border = "2px solid #4a86e8";
-                    userButton.innerHTML = user;
+                     
+                    // userList[user][0] is the name, 
+                    // userList[user][1] is the distance 
+                    userButton.innerHTML = userList[user][0] + ' (' + userList[user][1] + 'km)';
+                    
                     // add click listener that locates user that is clicked.
                     userButton.addEventListener('click', (event) => {
                         let username = event.srcElement.innerHTML;
