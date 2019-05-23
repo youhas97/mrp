@@ -75,5 +75,22 @@ export default {
   border: 1px solid #888;
   width: 80%; /* Could be more or less, depending on screen size */
 }
+
+#send-alert-btn {
+    font-size: 100%;
+    border-radius: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 2px solid #4a86e8;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 </style>
 

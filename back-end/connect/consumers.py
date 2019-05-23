@@ -5,7 +5,7 @@ from channels.auth import login, get_user, logout
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.auth.models import User
+
 
 
 """

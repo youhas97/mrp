@@ -1,6 +1,6 @@
 <template>
-    <div style="width:100%;">
-            <button @mousedown="hold" @mouseup="release" @mouseout="release">
+    <div style="width: 370px; height: 40px; margin: 0 auto;">
+            <button @mouseup="alert">
                 {{buttonText}}
             </button>
 
@@ -21,10 +21,7 @@ export default {
         return {
             buttonText: "Larma",
             timerStarted: false,
-            timeoutId: 0,
-            intervalId: 0,
-            fetchTextInterval: 0,
-            secs: 0,
+            fetchTextInterval: null,
         }
     },
     mounted() {
@@ -36,40 +33,18 @@ export default {
         };
     },
     methods: {
-        hold: function() {
+        alert: function() {
             app = this;
-            var secs = 3;
-            app.buttonText = "Håll i " + secs + " sekunder";
-            app.timerStarted = true;
-            app.intervalId = setInterval(function() {
-                secs -= 1;
-                app.buttonText = "Håll i " + secs + " sekunder";
-            }, 1000)
-            app.timeoutId = setTimeout(function() {
-                clearInterval(app.intervalId);
-                app.timerStarted = false;
-                app.$store.state.alert.alerting = !app.$store.state.alert.alerting;
-                /* eslint-disable no-console */
-                console.log("alerting: ", app.$store.state.alert.alerting);
-                /* eslint-enable no-console */
-                app.fetchButtonText();
-            }, secs * 1000);
+            app.$store.state.alert.alerting = !app.$store.state.alert.alerting;
+            /* eslint-disable no-console */
+            console.log("alerting: ", app.$store.state.alert.alerting);
+            /* eslint-enable no-console */
 
-            app.fetchTextInterval = setInterval(function() {
-                if (!app.timerStarted) {
+            if (app.fetchTextInterval == null) {
+                app.fetchTextInterval = setInterval(function() {
                     app.fetchButtonText();
-                }
-            }, 100);
-
-        },
-        release: function() {
-            if (app.timerStarted) {
-                //Cancel alert
-                clearInterval(app.intervalId);
-                clearTimeout(app.timeoutId);
+                }, 1);
             }
-            app.timerStarted = false;
-            app.fetchButtonText();
         },
         fetchButtonText: function() {
             if (app.$store.state.alert.alerting) {

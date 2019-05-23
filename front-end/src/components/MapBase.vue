@@ -15,20 +15,16 @@ let google;
 let positionTimer;
 let app;
 
-
-/*
-    name = client_data['name']
-    id = client_data['id']
-    pos = client_data['pos']
-    group = client_data['group']
-    need_help = client_data['needHelp']
-    GPS_VALUES[id] = {
-        'pos' : pos, 
-        'name' : name, 
-        'group' : group, 
-        'needHelp' : need_help
-        }
-*/
+/* Constant values*/
+const ZOOM = 13;
+const ICONSIZE = 30;
+const BUTTON_STYLING =  `font-size: 100%;`+
+                                `border-radius: 10px;`+
+                                `padding-left: 15px;`+
+                                `padding-right: 15px;`+
+                                `padding-top: 5px;`+
+                                `padding-bottom: 5px;`+
+                                `border: 2px solid #4a86e8;`;
 
 function handleLocationError(browserHasGeolocation, marker, pos, map) {
     //marker.setPosition(pos);
@@ -43,6 +39,8 @@ function geoLocate(map) {
             lng: position.coords.longitude
         };
         map.setCenter(pos);
+        map.setZoom(ZOOM);
+
         return position;
     }, function() {
         // Geolocation ej tillåte
@@ -78,12 +76,19 @@ export default {
         }
     },
     async mounted() {
+        app = this;
         google = await gmapsInit();
         const geocoder = new google.maps.Geocoder();
-        const map = new google.maps.Map(this.$el, {
+        const map = new google.maps.Map(app.$el, {
             disableDefaultUI: true
         });
-        app = this;
+
+        var closeInfoWindows = (event) => {
+            for(var i = 0; i < app.$store.state.allInfoWindows.length; i++) {
+                app.$store.state.allInfoWindows[i].close();
+            }
+        }
+        google.maps.event.addListener(map, 'click', closeInfoWindows);
 
         app.directionsService = new google.maps.DirectionsService();
         app.directionsDisplay = new google.maps.DirectionsRenderer({
@@ -99,10 +104,10 @@ export default {
         /* This function will be called when search function 
         has been triggered with vue.$root.$emit('locateUser') in
         Backup component.*/
-        this.$root.$on('locateUser', (username) => {
+        app.$root.$on('locateUser', (username) => {
             let pos = app.$store.state.users.allMarkers[username].position;
             map.panTo(pos);
-            map.setZoom(15);
+            map.setZoom(ZOOM);
             map.setCenter(pos);
             google.maps.event.trigger(
                 app.$store.state.users.allMarkers[username],
@@ -112,12 +117,12 @@ export default {
 
         /* This function will be called when a user calls for backup
         and the marker icon has to be changed, in Backup component. */
-        this.$root.$on('changeMarker', () => {
-            this.changeMarker(
-                this.$store.state.users.allMarkers[
-                    this.$store.state.users.username
+        app.$root.$on('changeMarker', () => {
+            app.changeMarker(
+                app.$store.state.users.allMarkers[
+                    app.$store.state.users.username
                 ],
-                this.$store.state.users.meObj
+                app.$store.state.users.meObj
             );
         });
 
@@ -137,10 +142,14 @@ export default {
                         draggable: false
                     });
                     marker.setIcon({
-                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
-                        scaledSize: new google.maps.Size(30, 30)
+                        url: "https://img.icons8.com/flat_round/64/000000/box-important.png",
+                        scaledSize: new google.maps.Size(ICONSIZE, ICONSIZE)
                     });
-                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    marker.setAnimation(google.maps.Animation.DROP);
+                    setTimeout(function(){
+                        marker.setAnimation(google.maps.Animation.BOUNCE)
+                    },350);
+
                     map.panTo(event.latLng);
                     app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
 
@@ -150,7 +159,11 @@ export default {
                     let windowContent = '<div id="content">'+
                         `<h3>${title.value}</h3>`+
                         `<p>Beskrivning: ${textArea.value}</p>`+
-                        `<button onclick="document.getElementById('app').__vue__.$root.$emit('removeAlert', ${marker.id})">Ta bort larm</button>`+
+                        `<button onclick=`+
+                        `"document.getElementById('app').__vue__.$root.$emit`+
+                        `('removeAlert', ${marker.id})"`+
+                        `style="${BUTTON_STYLING}">`+
+                        `Ta bort larm</button>`+
                         '</div>';
 
                     let infowindow = new google.maps.InfoWindow({
@@ -167,6 +180,7 @@ export default {
                         infowindow.open(map, marker);
                     });
 
+                    app.$store.state.allInfoWindows.push(infowindow);
                     app.$store.state.alert.alertID += 1;
                     app.$store.state.alert.alerting = false;
                     modal.style.display = "none";
@@ -181,25 +195,25 @@ export default {
         /* Listener for $emit('removeAlert'), which is called on 
         alert infowindow button onclick. The infowindow is defined 
         in the listener method above.*/
-        this.$root.$on('removeAlert', (id) => {
-            this.removeAlert(id);
+        app.$root.$on('removeAlert', (id) => {
+            app.removeAlert(id);
         });
 
         /* Listener for $emit('calcRoute'), which is called on the USERS
         alert infowindow button onclick "vägbeskrivning", which is added
         in receiveMessage(). */
-        this.$root.$on('calcRoute', (markerID) => {
-            this.calcRoute(markerID);
-            this.directionsDisplay.setMap(map);
+        app.$root.$on('calcRoute', (markerID) => {
+            app.calcRoute(markerID);
+            app.directionsDisplay.setMap(map);
         });
 
         /* Listener for $emit('cancelDirections') in Backup component. 
         Removes directions from map. */
-        this.$root.$on('cancelDirections', () => {
-            this.directionsDisplay.setMap(null);
+        app.$root.$on('cancelDirections', () => {
+            app.directionsDisplay.setMap(null);
         });
 
-        this.recieveMessage(map);
+        app.receiveMessage(map);
         geocoder.geocode({ address: 'Linköping' }, (results, status) => {
             if (status !== 'OK' || !results[0]) {
                 throw new Error(status);
@@ -256,7 +270,7 @@ export default {
                     })
                 }, 200);
 
-                //let position = geoLocate(map);
+                geoLocate(map);
                 //var updatePos = window.setInterval(app.sendPerson, 500);
             } else {
                 handleLocationError(false, map.getCenter(), map);
@@ -264,7 +278,7 @@ export default {
         });
     },
     methods: {
-        recieveMessage: function(map) {
+        receiveMessage: function(map) {
             /* Receive socket message from server. */
 
             app.$store.state.websocket.onmessage = function(event) {
@@ -279,10 +293,13 @@ export default {
                         map: map
                     });
                     marker.setIcon({
-                        url: "https://img.icons8.com/flat_round/64/000000/error.png",
-                        scaledSize: new google.maps.Size(30, 30)
+                        url: "https://img.icons8.com/flat_round/64/000000/box-important.png",
+                        scaledSize: new google.maps.Size(ICONSIZE, ICONSIZE)
                     });
-                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                    marker.setAnimation(google.maps.Animation.DROP);
+                    setTimeout(function(){
+                        marker.setAnimation(google.maps.Animation.BOUNCE)
+                    },350);
                     map.panTo(data.pos);
                     app.$store.state.alert.allAlerts[data.id] = marker;
                     /* Create an infowindow for the alert icon */
@@ -292,10 +309,10 @@ export default {
                         `<button onclick=`+
                         `"document.getElementById('app').__vue__.$root.$emit(`+
                         `'calcRoute', ${marker.id}`+
-                        `)">`+
+                        `)" style="${BUTTON_STYLING}">` +
                         `Vägbeskrivning`+
                         `</button>`+
-                        '</div>';
+                        `</div>`;
 
                     let infowindow = new google.maps.InfoWindow({
                         content: windowContent
@@ -329,8 +346,12 @@ export default {
                         });
                         infowindow.open(map);
                     }
-
-                    app.$store.state.alert.allAlerts[data.id].setMap(null);
+                    let alert = app.$store.state.alert.allAlerts[data.id];
+                    let end = app.directionsDisplay.destination;
+                    console.log(`Destination: ${end}`);
+                    if (alert.id == app.$store.state.alert.destinationID)
+                        app.directionsDisplay.setMap(null);
+                    alert.setMap(null);
                     delete app.$store.state.alert.allAlerts[data.id];
                     return;
                 } else if (data.type == 'logout') {
@@ -371,6 +392,7 @@ export default {
                             infowindow.open(map, marker);
                         });
 
+                        app.$store.state.allInfoWindows.push(infowindow);
                         app.$store.state.users.allMarkers[username] = marker;
                         app.$store.state.users.allUsers[username] = userData;
 
@@ -403,7 +425,7 @@ export default {
             if (userData.needHelp) {
                 marker.setIcon({
                     url: "https://img.icons8.com/flat_round/64/000000/error.png",
-                    scaledSize: new google.maps.Size(30, 30)
+                    scaledSize: new google.maps.Size(ICONSIZE, ICONSIZE)
                 });
                 marker.setAnimation(google.maps.Animation.BOUNCE)
 
@@ -463,27 +485,28 @@ export default {
                 });
         },
         calcRoute: function(markerID) {
-            let start = this.$store.state.users.allMarkers[
-                this.$store.state.users.username
+            let start = app.$store.state.users.allMarkers[
+                app.$store.state.users.username
             ].position;
-            let end = this.$store.state.alert.allAlerts[markerID].position;
+            let end = app.$store.state.alert.allAlerts[markerID].position;
             var request = {
                 origin: start,
                 destination: end,
                 travelMode: 'DRIVING'
             };  
-            this.directionsService.route(request, (result, status) => {
+            app.directionsService.route(request, (result, status) => {
                 if (status == 'OK')
-                    this.directionsDisplay.setDirections(result);
+                    app.directionsDisplay.setDirections(result);
+                    app.$store.state.alert.destinationID = markerID;
             });
         },
         removeAlert: function(id) {
-            let marker = this.$store.state.alert.allAlerts[id];
-            this.$store.state.websocket.send(JSON.stringify({
+            let marker = app.$store.state.alert.allAlerts[id];
+            app.$store.state.websocket.send(JSON.stringify({
                 'type': 'gps_cancel_alert',
                 'id': marker.id
             }));
-            this.$store.state.alert.allAlerts[marker.id] = null;
+            app.$store.state.alert.allAlerts[marker.id] = null;
             marker.setMap(null);
         }
     }

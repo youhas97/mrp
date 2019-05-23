@@ -76,10 +76,10 @@ def register(request):
         data = json.loads(request.body)
         uname = data['username']
         pword = data['password']
-        group = data['groupnum']
+        group = data['groupname']
         name = data['name']
 
-        response = check_for_invalid_credentials(uname, pword, group)
+        response = check_for_invalid_credentials(uname, pword, group, name)
         if response is not None:
             return response
 
@@ -89,7 +89,7 @@ def register(request):
         """
         try:
             with transaction.atomic():
-                user = User.objects.create_user(username=uname, password=pword)
+                user = User.objects.create_user(username=uname, password=pword, first_name=name)
                 db_group = Group.objects.get(name=group)
                 db_group.user_set.add(user)
         except DatabaseError:
@@ -109,7 +109,7 @@ def register(request):
         response.status = 405
         return response
 
-def check_for_invalid_credentials(uname, pword, group):
+def check_for_invalid_credentials(uname, pword, group, name):
     """ Checks for invalid credentials.
 
     If invalid credentials are discovered, function will call invalid_credentials()
