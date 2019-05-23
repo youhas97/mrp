@@ -28,7 +28,7 @@
 
             <section>
             <label for="inputName" class="sr-only">
-            Namn (synligt för andra användare)
+            Förnamn 
             </label> 
             <br/>
 
@@ -75,6 +75,7 @@ export default {
             username: '',
             password:'',
             groupname:'',
+            name:'',
         }
     },
     methods: {
@@ -85,7 +86,7 @@ export default {
             /* eslint-disable no-console */
             console.log("username:", this.username);
             console.log("pw:", this.password);
-            console.log("groupnum:", this.groupname);
+            console.log("group:", this.groupname);
             /* eslint-enable no-console */
 
             let app = this;
@@ -124,6 +125,7 @@ export default {
                 'username': app.username,
                 'password': app.password,
                 'groupname': app.groupname,
+                'name' :    app.name,
             }));
             console.log("Create user sent.");
             /* eslint-enable no-console */
