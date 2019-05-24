@@ -151,7 +151,6 @@ export default {
                     },350);
 
                     map.panTo(event.latLng);
-                    app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
 
                     let textArea = document.getElementById('modal-textarea');
                     let title = document.getElementById('modal-title');
@@ -171,6 +170,9 @@ export default {
                     });
 
                     // send alert to other users.
+                    marker.header = title.value;
+                    marker.content = textArea.value;
+                    app.$store.state.alert.allAlerts[app.$store.state.alert.alertID] = marker;
                     app.sendAlert(marker.id, title.value, textArea.value);
 
                     // Start timer
@@ -399,7 +401,9 @@ export default {
                             for (let key in Object.keys(app.$store.state.alert.allAlerts)) {
                                 app.sendAlertTo(
                                     username, 
-                                    app.$store.state.alert.allAlerts[key].id
+                                    app.$store.state.alert.allAlerts[key].id,
+                                    app.$store.state.alert.allAlerts[key].header,
+                                    app.$store.state.alert.allAlerts[key].content
                                 )
                             }
                         }
@@ -457,12 +461,14 @@ export default {
                 'infowindow-content': content
             }));
         },
-        sendAlertTo: function(username, alertID) {
+        sendAlertTo: function(username, alertID, header, content) {
             app.$store.state.websocket.send(JSON.stringify({
                 'type': 'gps_alert_user',
                 'id': alertID,
                 'pos': app.$store.state.alert.allAlerts[alertID].position,
-                'sent_to': username
+                'sent_to': username,
+                'infowindow-header': header,
+                'infowindow-content': content
             }));
         },
         watchCurrentPosition: function(marker) {
