@@ -158,7 +158,7 @@ export default {
                     
                     // add click listener that locates user that is clicked.
                     userButton.addEventListener('click', (event) => {
-                        let username = event.srcElement.innerHTML;
+                        let username = userList[user][0];
                         this.$root.$emit('locateUser', username);
                         //document.getElementById('dropdown').classList.toggle('show');
                         this.toggleUsers();
