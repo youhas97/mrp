@@ -1,69 +1,70 @@
 <template>
-    <div class="login-wrapper border border-light">
-        <img alt="MRP Logo" src="../assets/logo.png">
-        <form class="form-signin"
-        @submit.prevent="createAccount">
-            <h2 class="form-signin-heading">
-            Skapa nytt konto
-            </h2>
+    <div id="background" class="login-wrapper border border-light">
+        <div id="createuser" class="login-wrapper border border-light">
+            <img alt="MRP Logo" src="../assets/logo.png">
+            <form class="form-signin"
+            @submit.prevent="createAccount">
+                <h2 class="form-signin-heading">
+                Skapa nytt konto
+                </h2>
 
-            <section>
-            <label for="inputUsername" class="sr-only"> Användarnamn 
-            </label> 
-            <br/>
+                <section>
+                <label for="inputUsername" class="sr-only"> Användarnamn 
+                </label> 
+                <br/>
 
-            <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Användarnamn" required autgofocus>
-            </section>
+                <input v-model="username" type="username" id="inputUsername" class="form-control" placeholder="Användarnamn" required autgofocus>
+                </section>
 
-            <section>
-            <label for="inputPassword" class="sr-only">
-            Lösenord
-            </label> 
-            <br/>
+                <section>
+                <label for="inputPassword" class="sr-only">
+                Lösenord
+                </label> 
+                <br/>
 
-            <input v-model="password" type="password" id="inputPassword"
-            class="form-control" placeholder="Lösenord" required> 
-            <br/>
-            </section> 
+                <input v-model="password" type="password" id="inputPassword"
+                class="form-control" placeholder="Lösenord" required> 
+                <br/>
+                </section> 
 
-            <section>
-            <label for="inputName" class="sr-only">
-            Fullständigt Namn 
-            </label> 
-            <br/>
+                <section>
+                <label for="inputName" class="sr-only">
+                Fullständigt Namn 
+                </label> 
+                <br/>
 
-            <input v-model="name" type="name" id="inputName"
-            class="form-control" placeholder="Namn" required> 
-            <br/>
-            </section> 
+                <input v-model="name" type="name" id="inputName"
+                class="form-control" placeholder="Namn" required> 
+                <br/>
+                </section> 
 
-            <section>
-            <label for="inputGroupname" class="sr-only">
-            Gruppnamn
-            </label> 
-            <br/>
+                <section>
+                <label for="inputGroupname" class="sr-only">
+                Gruppnamn
+                </label> 
+                <br/>
 
-            <input v-model="groupname" type="groupname" id="inputGroupname"
-            class="form-control" placeholder="Grupp" required> 
-            <br/>
-            </section> 
+                <input v-model="groupname" type="groupname" id="inputGroupname"
+                class="form-control" placeholder="Grupp" required> 
+                <br/>
+                </section> 
 
-            <!--
-            <button class="btn btn-lg btn-primary btn-block" type="submit" @release="createAccount">
-            Sign in
-            </button> -->
+                <!--
+                <button class="btn btn-lg btn-primary btn-block" type="submit" @release="createAccount">
+                Sign in
+                </button> -->
 
-            
-            <button class="btn btn-lg btn-primary btn-block" type="button" @click="createUser">
-            Skapa
-            </button>
-            
-            <button class="btn btn-lg btn-primary btn-block" type="button" @click="routeLogin">
-            Tillbaka till inloggningssidan
-            </button>
+                
+                <button class="btn btn-lg btn-primary btn-block" type="button" @click="createUser">
+                Skapa
+                </button>
+                
+                <button class="btn btn-lg btn-primary btn-block" type="button" @click="routeLogin">
+                Tillbaka till inloggningssidan
+                </button>
 
-        </form>
-
+            </form>
+        </div>
     </div>
 </template>
 
@@ -135,18 +136,28 @@ export default {
 </script>
 
 <style scoped>
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+}
+
 h2 {
     color: #4a86e8;
     font-weight: bold;
     font-size: 150%;
 }
+
 section {
     padding: 10px;
 }
+
 label {
     font-size: 100%;
     color: #4a86e8;
 }
+
 button {
     margin: 10px;
     font-size: 100%;
@@ -157,6 +168,7 @@ button {
     padding-bottom: 5px;
     border: 2px solid #4a86e8;
 }
+
 input {
     font-size: 100%;
     margin: 1px;
@@ -165,6 +177,18 @@ input {
     padding-right: 10px;
     border-radius: 30px 10px;
     border: 1px solid #4a86e8;
+}
+
+#background {
+    height: 95vh;
+    border-top: 1px solid rgba(0, 0, 0, 0);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url("../assets/background.png");
+}
+
+#createuser {
+    margin-top: 5%;
 }
 
 </style>

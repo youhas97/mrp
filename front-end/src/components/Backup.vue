@@ -104,9 +104,6 @@ export default {
             var rad = function(x) {
                 return x * Math.PI / 180;
             };
-            
-
-            console.log(meObj.pos);
 
             var R = 6378137; // Earth's mean radius in meter
 

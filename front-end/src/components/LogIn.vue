@@ -209,7 +209,7 @@ input {
 }
 
 #background {
-    height: 100%;
+    height: 95vh;
     border-top: 1px solid rgba(0, 0, 0, 0);
     background-size: cover;
     background-repeat: no-repeat;
