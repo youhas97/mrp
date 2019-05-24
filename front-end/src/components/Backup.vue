@@ -142,6 +142,8 @@ export default {
 
                 // Add all users to the dropdown div. 
                 for(var user in userList){
+                    if(user == 'ledning')
+                        continue;
                     var dropdown = document.getElementById('dropdown');
                     var userButton = document.createElement('button');
                     // styling.
@@ -158,9 +160,10 @@ export default {
                     
                     // add click listener that locates user that is clicked.
                     userButton.addEventListener('click', (event) => {
-                        let username = userList[user][0];
+                        var username = event.target.innerHTML.slice(
+                            0, event.target.innerHTML.indexOf(' ')
+                        );
                         this.$root.$emit('locateUser', username);
-                        //document.getElementById('dropdown').classList.toggle('show');
                         this.toggleUsers();
                     });
                     dropdown.appendChild(userButton);
