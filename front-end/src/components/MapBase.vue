@@ -313,6 +313,7 @@ export default {
                     let infowindow = new google.maps.InfoWindow({
                         content: windowContent
                     });
+                    app.$store.state.allInfoWindows.push(infowindow);
                     /* Listen for clicks on marker */
                     google.maps.event.addListener(marker, 'click', function(event) {
                         infowindow.open(map, marker);
