@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyAFC2mwH6j5F8fzQt500PZvjx-KA3ThexA';
+const API_KEY = 'INSERT YOUR GOOGLE MAPS API HERE';
 const CALLBACK_NAME = 'gmapsCallback';
 
 let initialized = !!window.google;
